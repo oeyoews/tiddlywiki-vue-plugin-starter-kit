@@ -30,11 +30,7 @@ export default defineConfig({
     },
     cssCodeSplit: false, // 禁用 CSS 代码分割，所有 CSS 将被提取到一个文件中
     emptyOutDir: true,
-    assetsDir: '',
-  },
-  define: {
-    'require("vue")': 'require("$:/plugins/oeyoews/neotw-vue3")',
-    "require('vue')": 'require("$:/plugins/oeyoews/neotw-vue3")',
+    assetsDir: './assets',
   },
   plugins: [
     vue(),

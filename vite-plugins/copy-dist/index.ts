@@ -55,21 +55,21 @@ export const copyDist = () => ({
       }
 
       // 复制其他资源文件
-      // const assetsDir = path.resolve(rootDir, 'dist/assets');
-      // if (fs.existsSync(assetsDir)) {
-      //   const targetAssetsDir = path.resolve(fullTargetDir, 'assets');
-      //   if (!fs.existsSync(targetAssetsDir)) {
-      //     fs.mkdirSync(targetAssetsDir, { recursive: true });
-      //   }
+      const assetsDir = path.resolve(rootDir, 'dist/assets');
+      if (fs.existsSync(assetsDir)) {
+        const targetAssetsDir = path.resolve(fullTargetDir, 'assets');
+        if (!fs.existsSync(targetAssetsDir)) {
+          fs.mkdirSync(targetAssetsDir, { recursive: true });
+        }
 
-      //   // 读取所有资源文件
-      //   const assetFiles = fs.readdirSync(assetsDir);
-      //   for (const file of assetFiles) {
-      //     const sourceAssetPath = path.resolve(assetsDir, file);
-      //     const targetAssetPath = path.resolve(targetAssetsDir, file);
-      //     copyFileWithMeta(sourceAssetPath, targetAssetPath);
-      //   }
-      // }
+        // 读取所有资源文件
+        const assetFiles = fs.readdirSync(assetsDir);
+        for (const file of assetFiles) {
+          const sourceAssetPath = path.resolve(assetsDir, file);
+          const targetAssetPath = path.resolve(targetAssetsDir, file);
+          copyFileWithMeta(sourceAssetPath, targetAssetPath);
+        }
+      }
     } catch (error) {
       console.error('Error copying files:', error);
       console.error('Error details:', error.message);
