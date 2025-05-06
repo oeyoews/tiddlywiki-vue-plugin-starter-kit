@@ -1,12 +1,12 @@
 /*\
-title: $:/plugins/oeyoews/demo/widget.js
+title: $:/plugins/{{author}}/{{pluginName}}/widget.js
 type: application/javascript
 module-type: widget
 
 \*/
 const { widget: Widget } = require('$:/core/modules/widgets/widget.js');
 
-class DemoWidget extends Widget {
+class Plugin{{capitalizedPluginName}}Widget extends Widget {
   constructor(parseTreeNode, options) {
     super(parseTreeNode, options);
   }
@@ -32,7 +32,7 @@ class DemoWidget extends Widget {
     const component = require('./app');
     const domNode = this.document.createElement('div');
     const props = {
-      title: title|| "Demo Plugin"
+      title: title || "{{description}}"
     }
 
     try {
@@ -40,7 +40,7 @@ class DemoWidget extends Widget {
 
       app.config.errorHandler = (err) => {
         const text = `[Vue3](${app.version}): ` + err;
-        console.error(text, '(demo plugin)');
+        console.error(text, '({{pluginName}} plugin)');
         domNode.textContent = text;
         domNode.style.color = 'red';
       };
@@ -51,10 +51,10 @@ class DemoWidget extends Widget {
       parent.insertBefore(domNode, nextSibling);
       this.domNodes.push(domNode);
     } catch (e) {
-      console.error(e.message, 'demo plugin');
+      console.error(e.message, '{{pluginName}} plugin');
     }
   }
 }
 
-/** @description vue-demo widget */
-exports['demo'] = DemoWidget;
+/** @description {{description}} widget */
+exports['{{pluginName}}'] = Plugin{{capitalizedPluginName}}Widget;

@@ -1,0 +1,5 @@
+title: $:/plugins/{{author}}/{{pluginName}}/readme
+
+!! {{description}}
+
+<${{pluginName}} />

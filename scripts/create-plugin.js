@@ -88,200 +88,51 @@ function createPlugin(pluginName, description, author) {
   // console.log(`✅ 创建目录: ${wikiPluginDir}`);
   // console.log(`✅ 创建目录: ${wikiTiddlersDir}`);
 
-  // 创建 plugin.info 文件
-  const pluginInfo = {
-    title: `$:/plugins/${author}/${pluginName}`,
-    description: description,
-    author: author,
-    version: '0.1.0',
-    'core-version': '>=5.3.6',
-    type: 'application/json',
-    'plugin-type': 'plugin',
-    name: pluginName,
-    list: 'readme'
+  // 替换模板中的变量
+  const templateVars = {
+    pluginName,
+    description,
+    author,
+    capitalizedPluginName: capitalizeFirstLetter(pluginName)
   };
 
-  fs.writeFileSync(
+  // 创建 plugin.info 文件
+  createFileFromTemplate(
+    'plugin.info.template.js',
     path.resolve(srcPluginDir, 'plugin.info'),
-    JSON.stringify(pluginInfo, null, 2),
-    'utf-8'
+    templateVars
   );
   console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'plugin.info')}`);
 
   // 创建 readme.tid 文件
-  const readmeContent = `title: $:/plugins/${author}/${pluginName}/readme
-
-!! ${description}
-
-<$${pluginName} />
-`;
-
-  fs.writeFileSync(
+  createFileFromTemplate(
+    'readme.tid.template',
     path.resolve(srcPluginDir, 'readme.tid'),
-    readmeContent,
-    'utf-8'
+    templateVars
   );
   console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'readme.tid')}`);
 
   // 创建 main.ts 文件
-  const mainTsContent = `import App from './App.vue'
-import { h } from 'vue';
-
-// 创建一个工厂函数，接收参数并返回组件实例
-export default function component(props = {}) {
-  // 返回一个函数，该函数可以被 TiddlyWiki 调用
-  return function(containerProps = {}) {
-    // 合并来自 TiddlyWiki 的属性和默认属性
-    const mergedProps = { ...props, ...containerProps }
-
-    // 创建一个渲染函数，使用 h 函数渲染 App 组件并传递属性
-    return {
-      render() {
-        return h(App, mergedProps)
-      }
-    }
-  }
-}
-`;
-
-  fs.writeFileSync(
+  createFileFromTemplate(
+    'main.ts.template',
     path.resolve(srcPluginDir, 'main.ts'),
-    mainTsContent,
-    'utf-8'
+    templateVars
   );
   console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'main.ts')}`);
 
   // 创建 App.vue 文件
-  const appVueContent = `<script setup lang="ts">
-import HelloWorld from '@/components/HelloWorld.vue'
-
-// 定义组件可接收的属性
-const props = defineProps<{
-  // 添加你需要的属性，并提供默认值
-  title?: string
-  theme?: string
-  showLogos?: boolean
-}>()
-</script>
-
-<template>
-  <div class="${pluginName}-plugin">
-    <h2>{{ title || '${description}' }}</h2>
-    <HelloWorld :msg="title || '${pluginName}'" />
-  </div>
-</template>
-
-<style scoped>
-.${pluginName}-plugin {
-  padding: 20px;
-  border: 2px solid #42b883;
-  border-radius: 8px;
-  background-color: #f8f8f8;
-}
-</style>`;
-
-  fs.writeFileSync(
+  createFileFromTemplate(
+    'App.vue.template',
     path.resolve(srcPluginDir, 'App.vue'),
-    appVueContent,
-    'utf-8'
+    templateVars
   );
   console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'App.vue')}`);
 
-  // 创建 style.css 文件
-  const styleCssContent = `.${pluginName}-plugin h2 {
-  color: #42b883;
-  font-size: 1.8em;
-  margin-bottom: 1em;
-}
-
-.${pluginName}-plugin button {
-  background-color: #42b883;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.${pluginName}-plugin button:hover {
-  background-color: #3aa876;
-}`;
-
-  fs.writeFileSync(
-    path.resolve(srcPluginDir, 'style.css'),
-    styleCssContent,
-    'utf-8'
-  );
-  console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'style.css')}`);
-
   // 创建 widget.js 文件
-  const widgetJsContent = `/*\\
-title: $:/plugins/${author}/${pluginName}/widget.js
-type: application/javascript
-module-type: widget
-
-\\*/
-const { widget: Widget } = require('$:/core/modules/widgets/widget.js');
-
-class ${capitalizeFirstLetter(pluginName)}Widget extends Widget {
-  constructor(parseTreeNode, options) {
-    super(parseTreeNode, options);
-  }
-
-  render(parent, nextSibling) {
-    if (!$tw.browser) return;
-
-    this.computeAttributes();
-    this.execute();
-
-    const ssr = this.document.isTiddlyWikiFakeDom;
-    if (ssr) return;
-
-    const vuelib = '$:/plugins/oeyoews/neotw-vue3/vue.global.prod.js';
-
-    if (!window.Vue) {
-      window.Vue = require(vuelib);
-      window.vue = require(vuelib);
-    }
-    const {title} = this.attributes;
-
-    const { createApp } = window.Vue;
-    const component = require('./app');
-    const domNode = this.document.createElement('div');
-    const props = {
-      title: title || "${description}"
-    }
-
-    try {
-      const app = createApp(component(props)());
-
-      app.config.errorHandler = (err) => {
-        const text = \`[Vue3](\${app.version}): \` + err;
-        console.error(text, '(${pluginName} plugin)');
-        domNode.textContent = text;
-        domNode.style.color = 'red';
-      };
-
-      // 挂载
-      app.mount(domNode);
-
-      parent.insertBefore(domNode, nextSibling);
-      this.domNodes.push(domNode);
-    } catch (e) {
-      console.error(e.message, '${pluginName} plugin');
-    }
-  }
-}
-
-/** @description ${description} widget */
-exports['${pluginName}'] = ${capitalizeFirstLetter(pluginName)}Widget;
-`;
-
-  fs.writeFileSync(
+  createFileFromTemplate(
+    'widget.js.template',
     path.resolve(wikiTiddlersDir, 'widget.js'),
-    widgetJsContent,
-    'utf-8'
+    templateVars
   );
   console.log(`✅ 创建文件: ${path.resolve(wikiTiddlersDir, 'widget.js')}`);
 
@@ -290,6 +141,37 @@ exports['${pluginName}'] = ${capitalizeFirstLetter(pluginName)}Widget;
   console.log(`npm run build:plugin --name=${pluginName}`);
   console.log(`\n或者构建所有插件:`);
   console.log(`npm run build:all`);
+}
+
+/**
+ * 从模板创建文件
+ * @param {string} templateName 模板文件名
+ * @param {string} outputPath 输出文件路径
+ * @param {Object} vars 替换变量
+ */
+function createFileFromTemplate(templateName, outputPath, vars) {
+  // 读取模板文件
+  const templatePath = path.resolve(templatesDir, templateName);
+  let content = fs.readFileSync(templatePath, 'utf-8');
+
+  // 替换模板变量
+  Object.entries(vars).forEach(([key, value]) => {
+    const regex = new RegExp(`{{${key}}}`, 'g');
+    content = content.replace(regex, value);
+  });
+
+  // 如果是 plugin.info 文件，需要将内容转换为 JSON
+  if (outputPath.endsWith('plugin.info')) {
+    try {
+      const jsonObj = JSON.parse(content);
+      content = JSON.stringify(jsonObj, null, 2);
+    } catch (e) {
+      console.error('解析 plugin.info 模板失败:', e);
+    }
+  }
+
+  // 写入文件
+  fs.writeFileSync(outputPath, content, 'utf-8');
 }
 
 /**

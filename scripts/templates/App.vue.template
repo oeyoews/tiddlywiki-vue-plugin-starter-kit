@@ -11,17 +11,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="demo-plugin">
-    <h2>这是Demo插件</h2>
-    <HelloWorld :msg="title || 'Demo Plugin'" />
+  <div class="{{pluginName}}-plugin">
+    <h2>{{ title || '{{description}}' }}</h2>
+    <HelloWorld :msg="title || '{{pluginName}}'" />
   </div>
 </template>
 
 <style scoped>
-.demo-plugin {
-  padding: 20px;
-  border: 2px solid #42b883;
-  border-radius: 8px;
-  background-color: #f8f8f8;
-}
 </style>
