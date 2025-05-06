@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { copyDist } from './vite-plugins/copy-dist/index';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
   build: {
     minify: false,
     rollupOptions: {
@@ -16,12 +16,16 @@ export default defineConfig({
         format: 'iife',
         // 定义外部依赖的全局变量名
         globals: {
-          vue: 'Vue'
-        }
-      }
+          vue: 'Vue',
+        },
+      },
     },
-    cssCodeSplit: false // 禁用 CSS 代码分割，所有 CSS 将被提取到一个文件中
-  }
-})
-
-
+    cssCodeSplit: false, // 禁用 CSS 代码分割，所有 CSS 将被提取到一个文件中
+    // 构建完成后执行的钩子
+    emptyOutDir: true,
+    outDir: 'dist',
+    assetsDir: '',
+  },
+  // 添加构建后钩子
+  plugins: [vue(), copyDist()],
+});
