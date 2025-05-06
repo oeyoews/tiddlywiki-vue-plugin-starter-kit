@@ -10,28 +10,38 @@ export const copyDist = () => ({
   name: 'copy-to-tiddlywiki',
   closeBundle: async () => {
     try {
+      // 获取项目根目录路径
+      const rootDir = process.cwd();
+
       // 确保目标目录存在
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
+      const fullTargetDir = path.resolve(rootDir, targetDir);
+      if (!fs.existsSync(fullTargetDir)) {
+        fs.mkdirSync(fullTargetDir, { recursive: true });
       }
 
       // 复制 app.js 到目标目录
-      const sourcePath = path.resolve(__dirname, 'dist/app.js');
-      const targetPath = path.resolve(__dirname, targetDir, 'app.js');
+      const sourcePath = path.resolve(rootDir, 'dist/app.cjs');
+      const targetPath = path.resolve(rootDir, targetDir, 'app.js');
 
-      fs.copyFileSync(sourcePath, targetPath);
-      console.log(`Successfully copied app.js to ${targetDir}`);
+      if (fs.existsSync(sourcePath)) {
+        fs.copyFileSync(sourcePath, targetPath);
+        console.log(`Successfully copied app.js to ${targetDir}`);
+      } else {
+        console.error(`Source file not found: ${sourcePath}`);
+      }
 
       // 如果有 CSS 文件也需要复制
-      if (fs.existsSync(path.resolve(__dirname, 'dist/app.css'))) {
-        fs.copyFileSync(
-          path.resolve(__dirname, 'dist/app.css'),
-          path.resolve(__dirname, targetDir, 'app.css')
-        );
+      const cssSourcePath = path.resolve(rootDir, 'dist/app.css');
+      if (fs.existsSync(cssSourcePath)) {
+        const cssTargetPath = path.resolve(rootDir, targetDir, 'app.css');
+        fs.copyFileSync(cssSourcePath, cssTargetPath);
         console.log(`Successfully copied app.css to ${targetDir}`);
       }
     } catch (error) {
       console.error('Error copying files:', error);
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
     }
   },
 });
+

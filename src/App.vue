@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
+
+// 定义组件可接收的属性
+const props = defineProps<{
+  // 添加你需要的属性，并提供默认值
+  title?: string
+  theme?: string
+  showLogos?: boolean
+}>()
 </script>
 
 <template>
-  <div>
+  <div v-if="showLogos !== false">
     <a href="https://vite.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
     </a>
@@ -11,7 +19,8 @@ import HelloWorld from './components/HelloWorld.vue'
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
-  <HelloWorld msg="Vite + Vue" />
+  <!-- 使用传入的 title 属性，如果没有则使用默认值 -->
+  <HelloWorld :msg="title || 'Vite + Vue'" />
 </template>
 
 <style scoped>
@@ -28,3 +37,4 @@ import HelloWorld from './components/HelloWorld.vue'
   filter: drop-shadow(0 0 2em #42b883aa);
 }
 </style>
+

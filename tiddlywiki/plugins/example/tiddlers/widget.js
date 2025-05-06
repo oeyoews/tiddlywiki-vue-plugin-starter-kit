@@ -24,6 +24,7 @@ class ExampleWidget extends Widget {
 
     if (!window.Vue) {
       window.Vue = require(vuelib);
+      window.vue = require(vuelib);
     }
     const { rss, proxy } = this.attributes;
 
@@ -32,7 +33,7 @@ class ExampleWidget extends Widget {
     const domNode = this.document.createElement('div');
 
     try {
-      const app = createApp(component(rss, proxy));
+      const app = createApp(component({title: '这是你的参数示例'})());
 
       app.config.errorHandler = (err) => {
         const text = `[Vue3](${app.version}): ` + err;

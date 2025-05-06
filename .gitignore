@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+tiddlywiki/tiddlers/*.tid
