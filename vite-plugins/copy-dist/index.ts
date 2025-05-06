@@ -47,6 +47,25 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
         }
       }
 
+      // 复制 readme.tid 文件（如果存在）
+      const srcReadmePath = path.resolve(rootDir, `src/plugins/${pluginName}/readme.tid`);
+      const destReadmePath = path.resolve(rootDir, `wiki/plugins/${pluginName}/readme.tid`);
+
+      if (fs.existsSync(srcReadmePath)) {
+        console.log(`复制 readme.tid 文件: ${srcReadmePath} -> ${destReadmePath}`);
+        fs.copyFileSync(srcReadmePath, destReadmePath);
+      } else {
+        console.log(`src/plugins/${pluginName}/readme.tid 文件不存在，检查是否需要创建`);
+        // 如果目标目录中也没有 readme.tid 文件，则创建一个默认的
+        if (!fs.existsSync(destReadmePath)) {
+          console.log(`创建默认的 readme.tid 文件: ${destReadmePath}`);
+          const defaultReadmeContent = `title: $:/plugins/oeyoews/${pluginName}/readme
+
+<$${pluginName} />`;
+          fs.writeFileSync(destReadmePath, defaultReadmeContent, 'utf-8');
+        }
+      }
+
       // 复制 app.js 到目标目录
       const sourcePath = path.resolve(rootDir, `${pluginName}/app.cjs`);
       const targetPath = path.resolve(rootDir, targetDir, 'app.js');
