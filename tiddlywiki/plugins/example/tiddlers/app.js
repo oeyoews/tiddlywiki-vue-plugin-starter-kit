@@ -12,7 +12,7 @@ const _sfc_main$1 = /* @__PURE__ */ vue.defineComponent({
     const count = vue.ref(0);
     return (_ctx, _cache) => {
       return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-        vue.createElementVNode("h1", null, vue.toDisplayString(_ctx.msg), 1),
+        vue.createElementVNode("h1", null, vue.toDisplayString(_ctx.msg) + " " + vue.toDisplayString(_ctx.name), 1),
         vue.createElementVNode("div", _hoisted_1$1, [
           vue.createElementVNode("button", {
             type: "button",
@@ -52,7 +52,7 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const HelloWorld = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-cc337d8c"]]);
+const HelloWorld = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-8d7cc8de"]]);
 const _hoisted_1 = { key: 0 };
 const _sfc_main = /* @__PURE__ */ vue.defineComponent({
   __name: "App",
@@ -93,7 +93,7 @@ const _sfc_main = /* @__PURE__ */ vue.defineComponent({
     };
   }
 });
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-b5e95aa8"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-328c88da"]]);
 function component(props = {}) {
   return function(containerProps = {}) {
     const mergedProps = { ...props, ...containerProps };

@@ -1,17 +1,17 @@
 
-.read-the-docs[data-v-cc337d8c] {
+.read-the-docs[data-v-8d7cc8de] {
   color: #888;
 }
 
-.logo[data-v-b5e95aa8] {
+.logo[data-v-328c88da] {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
-.logo[data-v-b5e95aa8]:hover {
+.logo[data-v-328c88da]:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
-.logo.vue[data-v-b5e95aa8]:hover {
+.logo.vue[data-v-328c88da]:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
 }

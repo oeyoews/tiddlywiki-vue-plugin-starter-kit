@@ -1,10 +1,18 @@
-# Vue 3 + TypeScript + Vite
+## TiddlyWiki Vue 插件启动套件
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+> 这是一个用于创建 TiddlyWiki Vue 插件的启动套件，它允许你使用 Vue 3 和 TypeScript 开发 TiddlyWiki 插件。
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## 特性
 
-<!-- https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.13/vue.global.prod.min.js -->
+* 基于 Vue 3 和 TypeScript
+* 使用 Vite 进行快速开发和构建
+* 自动将构建产物复制到 TiddlyWiki 插件目录
+* 支持向 Vue 组件传递参数
+* 与 TiddlyWiki 无缝集成
+
+## TODO
+
+* [ ] 支持多插件构建
 
 
 

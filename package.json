@@ -4,11 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:type": "vue-tsc -b && vite build",
-    "preview": "vite preview --port 8080",
-    "dev:tw5": "tiddlywiki ./tiddlywiki --listen"
+    "dev": "tiddlywiki ./tiddlywiki --listen",
+    "build": "vite build"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

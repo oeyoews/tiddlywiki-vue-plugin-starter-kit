@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import {Tw} from '@/utils/index'
 
 defineProps<{ msg: string }>()
 
@@ -7,7 +8,7 @@ const count = ref(0)
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
+  <h1>{{ msg }} {{ name }} </h1>
 
   <div class="card">
     <button type="button" @click="count++">count is {{ count }}</button>

@@ -30,7 +30,7 @@ export const copyDist = () => ({
         'const vue = require("$:/plugins/oeyoews/neotw-vue3");';
 
       if (code.includes(target)) {
-        console.log('✅ 找到 require("vue")，开始兼容tiddlywiki...');
+        console.log(`✅ 找到${target} ,开始兼容tiddlywiki...`);
         code = code.replace(target, '');
         fs.writeFileSync(sourcePath, code, 'utf-8');
         console.log('✅ 兼容完成');
