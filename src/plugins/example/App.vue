@@ -19,11 +19,15 @@ const props = defineProps<{
       <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
+  <div class="hello">dmeo</div>
   <!-- 使用传入的 title 属性，如果没有则使用默认值 -->
   <HelloWorld :msg="title || 'Vite + Vue'" />
 </template>
 
 <style scoped>
+.hello {
+  font-weight: bold;
+}
 .logo {
   height: 6em;
   padding: 1.5em;

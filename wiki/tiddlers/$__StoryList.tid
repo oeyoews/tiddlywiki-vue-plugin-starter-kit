@@ -1,5 +1,3 @@
-created: 20250506152739490
-list: $:/ControlPanel $:/plugins/oeyoews/ab $:/plugins/oeyoews/a
-modified: 20250506152739490
+list: $:/plugins/oeyoews/example [[Draft of '$:/plugins/oeyoews/example/widget.js']] $:/plugins/oeyoews/example/app.js $:/plugins/oeyoews/ab $:/plugins/oeyoews/a
 title: $:/StoryList
 type: text/vnd.tiddlywiki

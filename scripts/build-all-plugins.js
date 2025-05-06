@@ -37,10 +37,50 @@ const getPluginDirs = () => {
     });
 };
 
+// 复制文件
+const copyFiles = (pluginName, fileExtensions) => {
+  const srcPluginDir = path.resolve(rootDir, `src/plugins/${pluginName}`);
+  const wikiPluginDir = path.resolve(rootDir, `wiki/plugins/${pluginName}`);
+  const wikiTiddlersDir = path.resolve(wikiPluginDir, 'tiddlers');
+
+  // 确保目标目录存在
+  if (!fs.existsSync(wikiTiddlersDir)) {
+    fs.mkdirSync(wikiTiddlersDir, { recursive: true });
+  }
+
+  // 确保插件信息文件存在于目标目录
+  const srcPluginInfoPath = path.resolve(srcPluginDir, 'plugin.info');
+  const wikiPluginInfoPath = path.resolve(wikiPluginDir, 'plugin.info');
+
+  if (fs.existsSync(srcPluginInfoPath) && !fs.existsSync(wikiPluginInfoPath)) {
+    fs.copyFileSync(srcPluginInfoPath, wikiPluginInfoPath);
+    console.log(`✅ 复制文件: ${srcPluginInfoPath} -> ${wikiPluginInfoPath}`);
+  }
+
+  // 获取源目录中的所有文件
+  const files = fs.readdirSync(srcPluginDir);
+
+  // 复制指定扩展名的文件
+  for (const file of files) {
+    const ext = path.extname(file).toLowerCase();
+    if (fileExtensions.includes(ext) || fileExtensions.includes(file)) {
+      const srcPath = path.resolve(srcPluginDir, file);
+      const destPath = path.resolve(wikiTiddlersDir, file);
+
+      // 复制文件
+      fs.copyFileSync(srcPath, destPath);
+      console.log(`✅ 复制文件: ${srcPath} -> ${destPath}`);
+    }
+  }
+};
+
 // 构建单个插件
 const buildPlugin = (pluginName) => {
   return new Promise((resolve, reject) => {
     console.log(`\n开始构建插件: ${pluginName}`);
+
+    // 复制 JS 文件和 readme.tid 文件
+    copyFiles(pluginName, ['.js', 'readme.tid']);
 
     // 使用环境变量传递插件名称
     const env = { ...process.env, PLUGIN_NAME: pluginName };

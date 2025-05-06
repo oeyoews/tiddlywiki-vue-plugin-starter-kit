@@ -1,3 +1,4 @@
 title: $:/plugins/oeyoews/example/app.js
 type: application/javascript
+hide-body: yes
 module-type: library

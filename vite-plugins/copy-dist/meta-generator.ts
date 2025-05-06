@@ -25,6 +25,7 @@ function generateMetaContent(filePath, pluginName = DEFAULT_PLUGIN_NAME) {
     case '.js':
       return `title: ${title}
 type: application/javascript
+hide-body: yes
 module-type: library`;
 
     case '.css':

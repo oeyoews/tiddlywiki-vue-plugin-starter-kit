@@ -70,8 +70,6 @@ function createPlugin(pluginName, description, author) {
 
   // 创建插件目录
   const srcPluginDir = path.resolve(rootDir, `src/plugins/${pluginName}`);
-  const wikiPluginDir = path.resolve(rootDir, `wiki/plugins/${pluginName}`);
-  const wikiTiddlersDir = path.resolve(wikiPluginDir, 'tiddlers');
 
   // 检查插件目录是否已存在
   if (fs.existsSync(srcPluginDir)) {
@@ -81,8 +79,6 @@ function createPlugin(pluginName, description, author) {
 
   // 创建目录
   fs.mkdirSync(srcPluginDir, { recursive: true });
-  fs.mkdirSync(wikiPluginDir, { recursive: true });
-  fs.mkdirSync(wikiTiddlersDir, { recursive: true });
 
   console.log(`✅ 创建目录: ${srcPluginDir}`);
   // console.log(`✅ 创建目录: ${wikiPluginDir}`);
@@ -131,10 +127,10 @@ function createPlugin(pluginName, description, author) {
   // 创建 widget.js 文件
   createFileFromTemplate(
     'widget.js.template',
-    path.resolve(wikiTiddlersDir, 'widget.js'),
+    path.resolve(srcPluginDir, 'widget.js'),
     templateVars
   );
-  console.log(`✅ 创建文件: ${path.resolve(wikiTiddlersDir, 'widget.js')}`);
+  console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'widget.js')}`);
 
   console.log(`\n✅ 插件 ${pluginName} 创建成功!`);
   console.log(`\n使用以下命令构建插件:`);
