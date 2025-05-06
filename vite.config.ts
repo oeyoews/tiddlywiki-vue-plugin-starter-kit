@@ -18,6 +18,7 @@ export default defineConfig({
       fileName: 'app',
       formats: ['cjs'],
     },
+    // assetsInlineLimit: 102400, // 10KB
     rollupOptions: {
       external: ['vue'], // 将 Vue 标记为外部依赖
       // plugins: [ ],
