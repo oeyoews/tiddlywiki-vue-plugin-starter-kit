@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   build: {
-    minify: false, // test
+    minify: true, // test
     lib: {
       entry: path.resolve(__dirname, 'src/main.ts'),
       fileName: 'app',
@@ -23,6 +23,7 @@ export default defineConfig({
       // plugins: [ ],
       output: {
         globals: { vue: 'Vue' },
+        // inlineDynamicImports: true,
       },
     },
     cssCodeSplit: false, // 禁用 CSS 代码分割，所有 CSS 将被提取到一个文件中
