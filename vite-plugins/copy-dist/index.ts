@@ -114,7 +114,6 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
 
       // 如果有构建生成的 CSS 文件也需要复制
       const cssSourcePath = path.resolve(rootDir, `${pluginName}/app.css`);
-      console.log(cssSourcePath, 'css file')
       if (fs.existsSync(cssSourcePath)) {
         const cssTargetPath = path.resolve(rootDir, targetDir, 'app.css');
         copyFileWithMeta(cssSourcePath, cssTargetPath, pluginName);
@@ -140,7 +139,7 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
       // 复制插件源目录下的所有 JS 文件
       if (fs.existsSync(srcPluginDir)) {
         const jsFiles = fs.readdirSync(srcPluginDir)
-          .filter(file => file.endsWith('.js') && file !== 'main.js');
+          .filter(file => file.endsWith('.js'));
 
         if (jsFiles.length > 0) {
           console.log(`找到 ${jsFiles.length} 个 JS 文件需要复制`);
@@ -153,7 +152,7 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
             fs.copyFileSync(sourceJsPath, targetJsPath);
 
             // 确保有 meta 文件
-            copyFileWithMeta(sourceJsPath, targetJsPath, pluginName);
+            // copyFileWithMeta(sourceJsPath, targetJsPath, pluginName);
           }
         }
       }
