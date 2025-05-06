@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "tiddlywiki ./wiki --listen",
-    "build:plugin": "vite build",
-    "build": "node scripts/build-all-plugins.js"
+    "build": "vite build",
+    "build:plugin": "cross-env PLUGIN_NAME=$npm_config_name vite build",
+    "build:all": "node scripts/build-all-plugins.js",
+    "new": "node scripts/create-plugin.js"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

@@ -116,6 +116,28 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
           copyFileWithMeta(sourceAssetPath, targetAssetPath, pluginName);
         }
       }
+
+      // 复制插件源目录下的所有 JS 文件
+      const srcPluginDir = path.resolve(rootDir, `src/plugins/${pluginName}`);
+      if (fs.existsSync(srcPluginDir)) {
+        const jsFiles = fs.readdirSync(srcPluginDir)
+          .filter(file => file.endsWith('.js') && file !== 'main.js');
+
+        if (jsFiles.length > 0) {
+          console.log(`找到 ${jsFiles.length} 个 JS 文件需要复制`);
+
+          for (const file of jsFiles) {
+            const sourceJsPath = path.resolve(srcPluginDir, file);
+            const targetJsPath = path.resolve(fullTargetDir, file);
+
+            console.log(`复制 JS 文件: ${sourceJsPath} -> ${targetJsPath}`);
+            fs.copyFileSync(sourceJsPath, targetJsPath);
+
+            // 确保有 meta 文件
+            copyFileWithMeta(sourceJsPath, targetJsPath, pluginName);
+          }
+        }
+      }
     } catch (error) {
       console.error('Error copying files:', error);
       console.error('Error details:', error.message);
