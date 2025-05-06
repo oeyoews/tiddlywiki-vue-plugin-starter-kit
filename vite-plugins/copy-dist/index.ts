@@ -5,7 +5,7 @@ import path from 'path';
 import { copyFileWithMeta } from './meta-generator';
 
 // 目标目录
-const targetDir = 'tiddlywiki/plugins/example/tiddlers/';
+const targetDir = 'wiki/plugins/example/tiddlers/';
 
 export const copyDist = () => ({
   name: 'copy-to-tiddlywiki',
@@ -21,7 +21,7 @@ export const copyDist = () => ({
       }
 
       // 复制 app.js 到目标目录
-      const sourcePath = path.resolve(rootDir, 'dist/app.cjs');
+      const sourcePath = path.resolve(rootDir, 'example/app.cjs');
       const targetPath = path.resolve(rootDir, targetDir, 'app.js');
 
       if (fs.existsSync(sourcePath)) {

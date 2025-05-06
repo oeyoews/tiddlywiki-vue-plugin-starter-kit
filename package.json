@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tiddlywiki ./tiddlywiki --listen",
+    "dev": "tiddlywiki ./wiki --listen",
     "build": "vite build"
   },
   "devDependencies": {

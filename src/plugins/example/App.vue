@@ -12,12 +12,12 @@ const props = defineProps<{
 
 <template>
   <div v-if="showLogos !== false">
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
+    <!-- <a href="https://vite.dev" target="_blank"> -->
+      <!-- <img src="/vite.svg" class="logo" alt="Vite logo" /> -->
+    <!-- </a> -->
+    <!-- <a href="https://vuejs.org/" target="_blank">
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    </a> -->
   </div>
   <!-- 使用传入的 title 属性，如果没有则使用默认值 -->
   <HelloWorld :msg="title || 'Vite + Vue'" />
