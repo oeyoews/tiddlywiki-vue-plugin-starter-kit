@@ -2,22 +2,23 @@
 import fs from 'fs';
 import path from 'path';
 
-// 插件名称
-const PLUGIN_NAME = 'example';
+// 默认插件名称
+const DEFAULT_PLUGIN_NAME = 'example';
 // 插件作者
 const PLUGIN_AUTHOR = 'oeyoews';
 
 /**
  * 根据文件类型生成 meta 内容
  * @param {string} filePath 文件路径
+ * @param {string} pluginName 插件名称
  * @returns {string} meta 内容
  */
-function generateMetaContent(filePath) {
+function generateMetaContent(filePath, pluginName = DEFAULT_PLUGIN_NAME) {
   const fileName = path.basename(filePath);
   const ext = path.extname(filePath).toLowerCase();
 
   // 基本 title
-  const title = `$:/plugins/${PLUGIN_AUTHOR}/${PLUGIN_NAME}/${fileName}`;
+  const title = `$:/plugins/${PLUGIN_AUTHOR}/${pluginName}/${fileName}`;
 
   // 根据扩展名确定文件类型和其他属性
   switch (ext) {
@@ -40,15 +41,18 @@ type: text/css`;
 type: image/${ext.substring(1)}`;
 
     default:
+      return `title: ${title}
+type: text/plain`;
   }
 }
 
 /**
  * 检查并创建 meta 文件
  * @param {string} filePath 文件路径
+ * @param {string} pluginName 插件名称
  * @returns {void}
  */
-export function ensureMetaFile(filePath) {
+export function ensureMetaFile(filePath, pluginName = DEFAULT_PLUGIN_NAME) {
   const metaPath = `${filePath}.meta`;
 
   // 如果 meta 文件已存在，不做任何操作
@@ -57,7 +61,7 @@ export function ensureMetaFile(filePath) {
   }
 
   // 生成 meta 内容
-  const metaContent = generateMetaContent(filePath);
+  const metaContent = generateMetaContent(filePath, pluginName);
 
   // 写入 meta 文件
   fs.writeFileSync(metaPath, metaContent, 'utf-8');
@@ -68,9 +72,10 @@ export function ensureMetaFile(filePath) {
  * 复制文件并确保有对应的 meta 文件
  * @param {string} sourcePath 源文件路径
  * @param {string} targetPath 目标文件路径
+ * @param {string} pluginName 插件名称
  * @returns {void}
  */
-export function copyFileWithMeta(sourcePath, targetPath) {
+export function copyFileWithMeta(sourcePath, targetPath, pluginName = DEFAULT_PLUGIN_NAME) {
   if (!fs.existsSync(sourcePath)) {
     console.error(`源文件不存在: ${sourcePath}`);
     return;
@@ -87,5 +92,5 @@ export function copyFileWithMeta(sourcePath, targetPath) {
   console.log(`✅ 复制文件: ${sourcePath} -> ${targetPath}`);
 
   // 确保有 meta 文件
-  ensureMetaFile(targetPath);
+  ensureMetaFile(targetPath, pluginName);
 }

@@ -1,3 +1,5 @@
-list: [[New Tiddler 1]] $:/plugins/oeyoews/example GettingStarted
+created: 20250506145857315
+list: $:/ControlPanel $:/plugins/oeyoews/demo [[New Tiddler 1]] $:/plugins/oeyoews/example GettingStarted
+modified: 20250506145900106
 title: $:/StoryList
 type: text/vnd.tiddlywiki
