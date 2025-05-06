@@ -33,8 +33,11 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
         fs.mkdirSync(fullTargetDir, { recursive: true });
       }
 
+      // 定义源插件目录
+      const srcPluginDir = path.resolve(rootDir, `src/plugins/${pluginName}`);
+
       // 复制 plugin.info 文件（如果存在）
-      const srcPluginInfoPath = path.resolve(rootDir, `src/plugins/${pluginName}/plugin.info`);
+      const srcPluginInfoPath = path.resolve(srcPluginDir, 'plugin.info');
       const destPluginInfoPath = path.resolve(rootDir, `wiki/plugins/${pluginName}/plugin.info`);
 
       if (fs.existsSync(srcPluginInfoPath)) {
@@ -48,7 +51,7 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
       }
 
       // 复制 readme.tid 文件（如果存在）
-      const srcReadmePath = path.resolve(rootDir, `src/plugins/${pluginName}/readme.tid`);
+      const srcReadmePath = path.resolve(srcPluginDir, 'readme.tid');
       const destReadmePath = path.resolve(rootDir, `wiki/plugins/${pluginName}/readme.tid`);
 
       if (fs.existsSync(srcReadmePath)) {
@@ -93,8 +96,25 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
         console.error(`Source file not found: ${sourcePath}`);
       }
 
-      // 如果有 CSS 文件也需要复制
-      const cssSourcePath = path.resolve(rootDir, `${pluginName}/style.css`);
+      // 复制插件源目录下的所有 CSS 文件
+      const srcCssFiles = fs.readdirSync(srcPluginDir)
+        .filter(file => file.endsWith('.css'));
+
+      if (srcCssFiles.length > 0) {
+        console.log(`找到 ${srcCssFiles.length} 个 CSS 文件需要复制`);
+
+        for (const file of srcCssFiles) {
+          const sourceCssPath = path.resolve(srcPluginDir, file);
+          const targetCssPath = path.resolve(fullTargetDir, file);
+
+          console.log(`复制 CSS 文件: ${sourceCssPath} -> ${targetCssPath}`);
+          copyFileWithMeta(sourceCssPath, targetCssPath, pluginName);
+        }
+      }
+
+      // 如果有构建生成的 CSS 文件也需要复制
+      const cssSourcePath = path.resolve(rootDir, `${pluginName}/app.css`);
+      console.log(cssSourcePath, 'css file')
       if (fs.existsSync(cssSourcePath)) {
         const cssTargetPath = path.resolve(rootDir, targetDir, 'app.css');
         copyFileWithMeta(cssSourcePath, cssTargetPath, pluginName);
@@ -118,7 +138,6 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
       }
 
       // 复制插件源目录下的所有 JS 文件
-      const srcPluginDir = path.resolve(rootDir, `src/plugins/${pluginName}`);
       if (fs.existsSync(srcPluginDir)) {
         const jsFiles = fs.readdirSync(srcPluginDir)
           .filter(file => file.endsWith('.js') && file !== 'main.js');
