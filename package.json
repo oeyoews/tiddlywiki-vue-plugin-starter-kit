@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tiddlywiki ./wiki --listen",
-    "build": "vite build",
     "build:plugin": "vite build",
-    "build:all": "node scripts/build-all-plugins.js"
+    "build": "node scripts/build-all-plugins.js"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

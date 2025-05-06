@@ -9,14 +9,32 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-// 获取src/plugins目录下的所有插件目录
+// 获取src/plugins目录下的所有有效插件目录（包含plugin.info文件的目录）
 const getPluginDirs = () => {
   const pluginsDir = path.resolve(rootDir, 'src/plugins');
   if (!fs.existsSync(pluginsDir)) {
     return [];
   }
+
   return fs.readdirSync(pluginsDir)
-    .filter(dir => fs.statSync(path.join(pluginsDir, dir)).isDirectory());
+    .filter(dir => {
+      const dirPath = path.join(pluginsDir, dir);
+      // 检查是否是目录
+      if (!fs.statSync(dirPath).isDirectory()) {
+        return false;
+      }
+
+      // 检查src/plugins/[dir]目录下是否有plugin.info文件
+      const pluginInfoPath = path.join(dirPath, 'plugin.info');
+      // 如果没有plugin.info文件，检查wiki/plugins/[dir]目录下是否有plugin.info文件
+      const wikiPluginInfoPath = path.resolve(rootDir, `wiki/plugins/${dir}/plugin.info`);
+
+      const hasPluginInfo = fs.existsSync(pluginInfoPath) || fs.existsSync(wikiPluginInfoPath);
+      if (!hasPluginInfo) {
+        console.log(`跳过目录 ${dir}，因为没有找到 plugin.info 文件`);
+      }
+      return hasPluginInfo;
+    });
 };
 
 // 构建单个插件

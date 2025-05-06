@@ -8,14 +8,28 @@ import fs from 'fs';
 // 从环境变量获取插件名称
 const pluginName = process.env.PLUGIN_NAME || null;
 
-// 获取src/plugins目录下的所有插件目录
+// 获取src/plugins目录下的所有有效插件目录（包含plugin.info文件的目录）
 const getPluginDirs = () => {
   const pluginsDir = path.resolve(__dirname, 'src/plugins');
   if (!fs.existsSync(pluginsDir)) {
     return [];
   }
+
   return fs.readdirSync(pluginsDir)
-    .filter(dir => fs.statSync(path.join(pluginsDir, dir)).isDirectory());
+    .filter(dir => {
+      const dirPath = path.join(pluginsDir, dir);
+      // 检查是否是目录
+      if (!fs.statSync(dirPath).isDirectory()) {
+        return false;
+      }
+
+      // 检查src/plugins/[dir]目录下是否有plugin.info文件
+      const pluginInfoPath = path.join(dirPath, 'plugin.info');
+      // 如果没有plugin.info文件，检查wiki/plugins/[dir]目录下是否有plugin.info文件
+      const wikiPluginInfoPath = path.resolve(__dirname, `wiki/plugins/${dir}/plugin.info`);
+
+      return fs.existsSync(pluginInfoPath) || fs.existsSync(wikiPluginInfoPath);
+    });
 };
 
 // 获取要构建的插件列表

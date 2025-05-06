@@ -16,14 +16,35 @@ export const copyDist = (pluginName = DEFAULT_PLUGIN_NAME) => ({
 
       // 根据插件名称确定目标目录
       const targetDir = `wiki/plugins/${pluginName}/tiddlers/`;
+      const pluginDir = `wiki/plugins/${pluginName}/`;
 
       console.log(`Processing plugin: ${pluginName}`);
       console.log(`Target directory: ${targetDir}`);
+
+      // 确保插件目录存在
+      const fullPluginDir = path.resolve(rootDir, pluginDir);
+      if (!fs.existsSync(fullPluginDir)) {
+        fs.mkdirSync(fullPluginDir, { recursive: true });
+      }
 
       // 确保目标目录存在
       const fullTargetDir = path.resolve(rootDir, targetDir);
       if (!fs.existsSync(fullTargetDir)) {
         fs.mkdirSync(fullTargetDir, { recursive: true });
+      }
+
+      // 复制 plugin.info 文件（如果存在）
+      const srcPluginInfoPath = path.resolve(rootDir, `src/plugins/${pluginName}/plugin.info`);
+      const destPluginInfoPath = path.resolve(rootDir, `wiki/plugins/${pluginName}/plugin.info`);
+
+      if (fs.existsSync(srcPluginInfoPath)) {
+        console.log(`复制 plugin.info 文件: ${srcPluginInfoPath} -> ${destPluginInfoPath}`);
+        fs.copyFileSync(srcPluginInfoPath, destPluginInfoPath);
+      } else {
+        console.log(`src/plugins/${pluginName}/plugin.info 文件不存在，检查是否已经在目标目录中`);
+        if (!fs.existsSync(destPluginInfoPath)) {
+          console.warn(`警告: 插件 ${pluginName} 没有 plugin.info 文件，可能无法被 TiddlyWiki 识别为插件`);
+        }
       }
 
       // 复制 app.js 到目标目录
