@@ -16,17 +16,18 @@ const PLUGIN_AUTHOR = 'oeyoews';
 function generateMetaContent(filePath, pluginName = DEFAULT_PLUGIN_NAME) {
   const fileName = path.basename(filePath);
   const ext = path.extname(filePath).toLowerCase();
+  const exts = ['.css', '.png', '.svg']
 
   // 基本 title
   const title = `$:/plugins/${PLUGIN_AUTHOR}/${pluginName}/${fileName}`;
 
   // 根据扩展名确定文件类型和其他属性
   switch (ext) {
-    case '.js':
-      return `title: ${title}
-type: application/javascript
-hide-body: yes
-module-type: library`;
+//     case '.js':
+//       return `title: ${title}
+// type: application/javascript
+// hide-body: yes
+// module-type: library`;
 
     case '.css':
       return `title: ${title}
@@ -34,16 +35,12 @@ tags: $:/tags/Stylesheet
 type: text/css`;
 
     case '.png':
-    case '.jpg':
-    case '.jpeg':
-    case '.gif':
     case '.svg':
       return `title: ${title}
 type: image/${ext.substring(1)}`;
 
     default:
-      return `title: ${title}
-type: text/plain`;
+      return '';
   }
 }
 
@@ -57,7 +54,7 @@ export function ensureMetaFile(filePath, pluginName = DEFAULT_PLUGIN_NAME) {
   const metaPath = `${filePath}.meta`;
 
   // 如果 meta 文件已存在，不做任何操作
-  if (fs.existsSync(metaPath)) {
+  if (fs.existsSync(metaPath) || filePath.endsWith('.js')) {
     return;
   }
 
