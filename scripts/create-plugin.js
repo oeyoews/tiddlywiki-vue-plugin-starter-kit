@@ -8,6 +8,7 @@ import readline from 'readline';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
+const templatesDir = path.resolve(__dirname, 'templates');
 
 // 创建命令行交互界面
 const rl = readline.createInterface({
@@ -28,14 +29,32 @@ rl.question('请输入插件名称: ', (pluginName) => {
 
   // 询问插件描述
   rl.question('请输入插件描述 (可选): ', (description) => {
+    // 如果没有提供描述，使用插件名称作为描述
+    description = description || pluginName;
+
     // 询问作者名称
     rl.question(`请输入作者名称 (默认: ${DEFAULT_AUTHOR}): `, (author) => {
       // 如果没有提供作者名称，使用默认值
       author = author || DEFAULT_AUTHOR;
 
-      // 创建插件
-      createPlugin(pluginName, description || pluginName, author);
-      rl.close();
+      // 显示将要创建的插件信息
+      console.log('\n将要创建以下插件:');
+      console.log(`- 插件名称: ${pluginName}`);
+      console.log(`- 插件描述: ${description}`);
+      console.log(`- 作者名称: ${author}`);
+      console.log(`- 源目录: src/plugins/${pluginName}`);
+      console.log(`- 目标目录: wiki/plugins/${pluginName}`);
+
+      // 询问是否确认创建
+      rl.question('\n确认创建插件? (y/n): ', (answer) => {
+        if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
+          // 创建插件
+          createPlugin(pluginName, description, author);
+        } else {
+          console.log('已取消创建插件');
+        }
+        rl.close();
+      });
     });
   });
 });
@@ -168,6 +187,34 @@ const props = defineProps<{
   );
   console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'App.vue')}`);
 
+  // 创建 style.css 文件
+  const styleCssContent = `.${pluginName}-plugin h2 {
+  color: #42b883;
+  font-size: 1.8em;
+  margin-bottom: 1em;
+}
+
+.${pluginName}-plugin button {
+  background-color: #42b883;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.${pluginName}-plugin button:hover {
+  background-color: #3aa876;
+}`;
+
+  fs.writeFileSync(
+    path.resolve(srcPluginDir, 'style.css'),
+    styleCssContent,
+    'utf-8'
+  );
+  console.log(`✅ 创建文件: ${path.resolve(srcPluginDir, 'style.css')}`);
+
   // 创建 widget.js 文件
   const widgetJsContent = `/*\\
 title: $:/plugins/${author}/${pluginName}/widget.js
@@ -240,7 +287,9 @@ exports['${pluginName}'] = ${capitalizeFirstLetter(pluginName)}Widget;
 
   console.log(`\n✅ 插件 ${pluginName} 创建成功!`);
   console.log(`\n使用以下命令构建插件:`);
-  console.log(`npm run build`);
+  console.log(`npm run build:plugin --name=${pluginName}`);
+  console.log(`\n或者构建所有插件:`);
+  console.log(`npm run build:all`);
 }
 
 /**
