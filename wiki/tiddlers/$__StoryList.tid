@@ -1,2 +1,3 @@
-list: $:/plugins/oeyoews/example [[Draft of '$:/plugins/oeyoews/example/widget.js']] $:/plugins/oeyoews/example/app.js $:/plugins/oeyoews/ab $:/plugins/oeyoews/a
+list: $:/plugins/oeyoews/example/widget.js $:/plugins/oeyoews/example/app.js $:/plugins/oeyoews/ab $:/plugins/oeyoews/a
 title: $:/StoryList
+type: text/vnd.tiddlywiki

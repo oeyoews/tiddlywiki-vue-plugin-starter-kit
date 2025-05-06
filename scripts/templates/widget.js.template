@@ -56,5 +56,4 @@ class Plugin{{capitalizedPluginName}}Widget extends Widget {
   }
 }
 
-/** @description {{description}} widget */
 exports['{{pluginName}}'] = Plugin{{capitalizedPluginName}}Widget;
