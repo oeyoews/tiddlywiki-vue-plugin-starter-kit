@@ -23,9 +23,24 @@ export const copyDist = () => ({
       const sourcePath = path.resolve(rootDir, 'dist/app.cjs');
       const targetPath = path.resolve(rootDir, targetDir, 'app.js');
 
+      let code = fs.readFileSync(sourcePath, 'utf-8');
+      // 查找目标语句
+      const target = 'const vue = require("vue");';
+      const replacement =
+        'const vue = require("$:/plugins/oeyoews/neotw-vue3");';
+
+      if (code.includes(target)) {
+        console.log('✅ 找到 require("vue")，开始兼容tiddlywiki...');
+        code = code.replace(target, '');
+        fs.writeFileSync(sourcePath, code, 'utf-8');
+        console.log('✅ 兼容完成');
+      } else {
+        console.log('❌ 没有找到 require("vue")，无需替换');
+      }
+
       if (fs.existsSync(sourcePath)) {
         fs.copyFileSync(sourcePath, targetPath);
-        console.log(`Successfully copied app.js to ${targetDir}`);
+        console.log(`Successfully copied app.cjs to ${targetDir}`);
       } else {
         console.error(`Source file not found: ${sourcePath}`);
       }
@@ -44,4 +59,3 @@ export const copyDist = () => ({
     }
   },
 });
-
