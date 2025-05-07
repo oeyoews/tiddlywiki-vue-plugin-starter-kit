@@ -6,7 +6,7 @@
   "scripts": {
     "live": "vite",
     "dev": "tiddlywiki ./wiki --listen",
-    "build": "cross-env PLUGIN_NAME='vue-flow' vite build --mode=prod",
+    "build": "cross-env PLUGIN_NAME='vue-danmu' vite build --mode=prod",
     "build:plugin": "vite build",
     "build:all": "node scripts/build-all-plugins.js",
     "new": "node scripts/create-plugin.js"
@@ -25,6 +25,7 @@
     "vue-tsc": "^2.2.8"
   },
   "dependencies": {
+    "danmaku-vue": "^1.0.2",
     "tiddlywiki": "^5.3.6"
   }
 }

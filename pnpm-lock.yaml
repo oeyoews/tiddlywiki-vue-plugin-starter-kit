@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      danmaku-vue:
+        specifier: ^1.0.2
+        version: 1.0.2
       tiddlywiki:
         specifier: ^5.3.6
         version: 5.3.6
@@ -492,6 +495,9 @@ packages:
   d3-zoom@3.0.0:
     resolution: {integrity: sha512-b8AmV3kfQaqWAuacbPuNbL6vahnOJflOhexLzMMNLga62+/nh0JzvJ0aO/5a5MVgUFGS7Hu1P9P03o3fJkDCyw==}
     engines: {node: '>=12'}
+
+  danmaku-vue@1.0.2:
+    resolution: {integrity: sha512-fS6FBeM/HpABQViAjO0mdzkp5eyxhlgxzY49FhBk1kiGD9wAzvEpkt+egGFqEdpA0gEKGYwwcKXAUlcdcDtb9Q==}
 
   de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -1017,6 +1023,8 @@ snapshots:
       d3-interpolate: 3.0.1
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
+
+  danmaku-vue@1.0.2: {}
 
   de-indent@1.0.2: {}
 
