@@ -26,8 +26,13 @@ const state = {
 export default function useDragAndDrop() {
   const { draggedType, isDragOver, isDragging } = state;
 
-  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } =
-    useVueFlow();
+  const {
+    addNodes,
+    screenToFlowCoordinate,
+    onNodesInitialized,
+    updateNode,
+    getNodes,
+  } = useVueFlow();
 
   watch(isDragging, (dragging) => {
     document.body.style.userSelect = dragging ? 'none' : '';
@@ -38,8 +43,38 @@ export default function useDragAndDrop() {
    */
   function onDragStart(event: DragEvent, type: string) {
     if (event.dataTransfer) {
+      // 设置拖拽数据
       event.dataTransfer.setData('application/vueflow', type);
       event.dataTransfer.effectAllowed = 'move';
+
+      // 创建拖拽预览图像
+      if (event.target instanceof HTMLElement) {
+        // 尝试创建一个克隆元素作为拖拽预览
+        const dragPreview = event.target.cloneNode(true) as HTMLElement;
+        dragPreview.style.width = `${event.target.offsetWidth}px`;
+        dragPreview.style.height = `${event.target.offsetHeight}px`;
+        dragPreview.style.position = 'absolute';
+        dragPreview.style.top = '-1000px'; // 放在视图外
+        document.body.appendChild(dragPreview);
+
+        // 设置拖拽图像
+        try {
+          event.dataTransfer.setDragImage(
+            dragPreview,
+            event.target.offsetWidth / 2,
+            event.target.offsetHeight / 2
+          );
+          // 在下一个事件循环中移除预览元素
+          setTimeout(() => {
+            document.body.removeChild(dragPreview);
+          }, 0);
+        } catch (error) {
+          console.error('Failed to set drag image:', error);
+          if (document.body.contains(dragPreview)) {
+            document.body.removeChild(dragPreview);
+          }
+        }
+      }
     }
 
     draggedType.value = type;
@@ -51,6 +86,8 @@ export default function useDragAndDrop() {
     }
     document.body.style.userSelect = 'none';
 
+    // 添加全局事件监听
+    document.addEventListener('dragend', onDragEnd);
     document.addEventListener('drop', onDragEnd);
   }
 
@@ -69,11 +106,16 @@ export default function useDragAndDrop() {
     }
   }
 
-  function onDragLeave() {
+  function onDragLeave(event: DragEvent) {
+    event.preventDefault();
     isDragOver.value = false;
   }
 
-  function onDragEnd() {
+  function onDragEnd(event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
+
     isDragging.value = false;
     isDragOver.value = false;
     draggedType.value = null;
@@ -81,6 +123,8 @@ export default function useDragAndDrop() {
     // 恢复文本选择
     document.body.style.userSelect = '';
 
+    // 移除全局事件监听
+    document.removeEventListener('dragend', onDragEnd);
     document.removeEventListener('drop', onDragEnd);
   }
 
@@ -93,37 +137,78 @@ export default function useDragAndDrop() {
     // 如果没有拖拽类型，则不处理
     if (!draggedType.value) return;
 
+    // 获取鼠标在流程图中的坐标
     const position = screenToFlowCoordinate({
       x: event.clientX,
       y: event.clientY,
     });
 
     const nodeId = getId();
+    const nodeType = draggedType.value;
 
+    // 创建新节点
     const newNode = {
       id: nodeId,
-      type: draggedType.value,
+      type: nodeType,
       position,
-      data: { label: `${draggedType.value} ${nodeId.split('_')[1]}` },
+      data: {
+        label: `${nodeType} ${nodeId.split('_')[1]}`,
+        // 为不同类型的节点添加默认数据
+        ...(nodeType === 'text' ? { text: '双击编辑文本...' } : {}),
+        ...(nodeType === 'image'
+          ? { imageUrl: 'https://via.placeholder.com/150' }
+          : {}),
+        ...(nodeType === 'card'
+          ? {
+              title: `卡片 ${nodeId.split('_')[1]}`,
+              subtitle: '可折叠卡片',
+              content: '这是卡片内容，可以包含详细信息。',
+              tags: ['标签1', '标签2'],
+            }
+          : {}),
+        ...(nodeType === 'process'
+          ? {
+              description: '处理流程步骤',
+              status: 'pending', // 可选值: pending, processing, completed, error
+            }
+          : {}),
+        ...(nodeType === 'data'
+          ? {
+              dataType: 'JSON',
+              fields: [
+                { key: 'id', value: '001' },
+                { key: 'name', value: '示例数据' },
+                { key: 'type', value: 'string' },
+                { key: 'required', value: 'true' },
+              ],
+            }
+          : {}),
+      },
     };
 
-    /**
-     * Align node position after drop, so it's centered to the mouse
-     *
-     * We can hook into events even in a callback, and we can remove the event listener after it's been called.
-     */
-    const { off } = onNodesInitialized(() => {
-      updateNode(nodeId, (node) => ({
-        position: {
-          x: node.position.x - node.dimensions.width / 2,
-          y: node.position.y - node.dimensions.height / 2,
-        },
-      }));
+    // 添加节点
+    addNodes(newNode);
 
+    // 在节点初始化后调整位置，使其居中于鼠标位置
+    const { off } = onNodesInitialized(() => {
+      // 获取所有节点
+      const nodes = getNodes.value;
+      // 找到刚添加的节点
+      const addedNode = nodes.filter((node) => node.id === nodeId)[0];
+
+      if (addedNode) {
+        // 调整节点位置，使其居中于鼠标位置
+        updateNode(nodeId, (node) => ({
+          position: {
+            x: node.position.x - (node.dimensions?.width || 0) / 2,
+            y: node.position.y - (node.dimensions?.height || 0) / 2,
+          },
+        }));
+      }
+
+      // 移除监听器
       off();
     });
-
-    addNodes(newNode);
 
     // 重置拖拽状态
     onDragEnd();

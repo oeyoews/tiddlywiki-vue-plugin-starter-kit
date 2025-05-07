@@ -21,6 +21,6 @@ jobs:
     steps:
       - uses: oeyoews/tiddlywiki-publish@main
         with:
-          tiddlers-directory: ./wiki/
+          tiddlers-directory: ./wiki
           version: v5.3.6
           default-home-tiddlers: '[[$:/plugins/oeyoews/vue-flow/readme]]'

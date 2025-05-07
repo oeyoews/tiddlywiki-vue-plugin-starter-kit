@@ -14,6 +14,9 @@ import '@vue-flow/minimap/dist/style.css';
 import DefaultNode from './nodes/DefaultNode.vue';
 import TextNode from './nodes/TextNode.vue';
 import ImageNode from './nodes/ImageNode.vue';
+import CardNode from './nodes/CardNode.vue';
+import ProcessNode from './nodes/ProcessNode.vue';
+import DataNode from './nodes/DataNode.vue';
 import useDragAndDrop from '../hooks/useDnd';
 
 // 定义节点类型
@@ -21,14 +24,44 @@ const nodeTypes = {
   default: markRaw(DefaultNode),
   text: markRaw(TextNode),
   image: markRaw(ImageNode),
+  card: markRaw(CardNode),
+  process: markRaw(ProcessNode),
+  data: markRaw(DataNode),
 };
 
 // 初始化Vue Flow
-const { onConnect, addNodes, addEdges, fitView, setNodes, setEdges, project } =
-  useVueFlow();
+const {
+  onConnect,
+  addNodes,
+  addEdges,
+  fitView,
+  setNodes,
+  setEdges,
+  project,
+  onNodeDragStart,
+  onNodeDrag,
+  onNodeDragStop,
+  onPaneReady,
+} = useVueFlow({
+  defaultEdgeOptions: {
+    animated: true,
+    style: { stroke: '#1976d2', strokeWidth: 2 },
+    markerEnd: 'arrow',
+  },
+  fitViewOnInit: true,
+  minZoom: 0.5,
+  maxZoom: 1.5,
+});
 
 // 初始节点数据
 const initialNodes = [
+  {
+    id: '0',
+    type: 'image',
+    label: '节点 1',
+    position: { x: 150, y: 250 },
+    data: { label: '节点 2' },
+  },
   {
     id: '1',
     type: 'default',
@@ -45,9 +78,13 @@ const initialEdges = [];
 onMounted(() => {
   setNodes(initialNodes);
   setEdges(initialEdges);
-  setTimeout(() => {
-    fitView();
-  }, 0);
+
+  // 使用onPaneReady确保画布已准备好
+  onPaneReady(() => {
+    setTimeout(() => {
+      fitView({ padding: 0.2 });
+    }, 100);
+  });
 });
 
 // 处理连接
@@ -57,11 +94,44 @@ onConnect((params) => {
     ...params,
     animated: true,
     markerEnd: 'arrow', // 添加箭头
+    style: { stroke: '#1976d2', strokeWidth: 2 },
   });
 });
+
+// 节点拖动相关处理
+onNodeDragStart(() => {
+  // 防止文本被选中
+  document.body.style.userSelect = 'none';
+});
+
+onNodeDragStop(() => {
+  // 恢复文本选择
+  document.body.style.userSelect = '';
+});
+
 // 使用useDragAndDrop钩子获取所有拖拽相关函数
-const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart } =
+const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart, isDragging } =
   useDragAndDrop();
+
+// 定义节点类型数据
+const nodeCategories = [
+  {
+    title: '基础节点',
+    nodes: [
+      { type: 'default', icon: '📦', label: '默认节点' },
+      { type: 'text', icon: '📝', label: '文本节点' },
+      { type: 'image', icon: '🖼️', label: '图片节点' },
+    ],
+  },
+  {
+    title: '高级节点',
+    nodes: [
+      { type: 'card', icon: '🗂️', label: '卡片节点' },
+      { type: 'process', icon: '⚙️', label: '流程节点' },
+      { type: 'data', icon: '📊', label: '数据节点' },
+    ],
+  },
+];
 
 // 定义组件可接收的属性
 defineProps<{
@@ -77,26 +147,23 @@ defineProps<{
     <!-- 侧边栏 - 可拖拽节点 -->
     <div class="sidebar">
       <div class="sidebar-title">节点类型</div>
+
+      <!-- 使用v-for渲染节点类别和节点 -->
       <div
-        class="dnd-node"
-        draggable
-        @dragstart="onDragStart($event, 'default')">
-        <div class="node-icon">📦</div>
-        <div class="node-label">默认节点</div>
-      </div>
-      <div
-        class="dnd-node"
-        draggable
-        @dragstart="onDragStart($event, 'text')">
-        <div class="node-icon">📝</div>
-        <div class="node-label">文本节点</div>
-      </div>
-      <div
-        class="dnd-node"
-        draggable
-        @dragstart="onDragStart($event, 'image')">
-        <div class="node-icon">🖼️</div>
-        <div class="node-label">图片节点</div>
+        v-for="(category, categoryIndex) in nodeCategories"
+        :key="categoryIndex"
+        class="sidebar-section">
+        <div class="section-title">{{ category.title }}</div>
+
+        <div
+          v-for="(node, nodeIndex) in category.nodes"
+          :key="`${categoryIndex}-${nodeIndex}`"
+          class="dnd-node"
+          draggable
+          @dragstart="onDragStart($event, node.type)">
+          <div class="node-icon">{{ node.icon }}</div>
+          <div class="node-label">{{ node.label }}</div>
+        </div>
       </div>
     </div>
 
@@ -111,7 +178,13 @@ defineProps<{
         :node-types="nodeTypes"
         :default-zoom="1"
         :min-zoom="0.5"
-        :max-zoom="1.5">
+        :max-zoom="1.5"
+        :default-edge-options="{
+          animated: true,
+          style: { stroke: '#1976d2', strokeWidth: 2 },
+          markerEnd: 'arrow',
+        }"
+        class="vue-flow-wrapper">
         <Background
           pattern-color="#fff"
           :gap="8" />
@@ -120,7 +193,7 @@ defineProps<{
         <Panel
           position="top-right"
           class="custom-panel">
-          <button @click="fitView()">适应视图</button>
+          <button @click="fitView({ padding: 0.2 })">适应视图</button>
         </Panel>
       </VueFlow>
     </div>
@@ -162,9 +235,21 @@ defineProps<{
   font-size: 18px;
 }
 
+.sidebar-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+  padding-left: 5px;
+  border-left: 3px solid #1976d2;
+}
+
 .dnd-node {
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
   background-color: white;
@@ -256,5 +341,34 @@ defineProps<{
 
 :deep(#vue-flow__arrowhead) {
   fill: #1976d2; /* 蓝色，与连接线颜色匹配 */
+}
+
+/* 拖拽相关样式 */
+.vue-flow-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+/* 禁止文本选择，防止拖拽时选中文本 */
+.vue-flow-wrapper.dragging,
+.vue-flow-wrapper.dragging * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* 拖拽时的节点样式 */
+:deep(.vue-flow__node.dragging) {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* 拖拽预览样式 */
+.dnd-preview {
+  pointer-events: none;
+  position: absolute;
+  z-index: 1000;
+  opacity: 0.8;
 }
 </style>
