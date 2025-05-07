@@ -12,10 +12,11 @@ export const copyDist = (pluginName = 'example') => ({
       const rootDir = process.cwd();
 
       // 根据插件名称确定目标目录
-      const targetDir = `wiki/plugins/${pluginName}/tiddlers/`;
       const pluginDir = `wiki/plugins/${pluginName}/`;
+      const targetDir = pluginDir + `tiddlers/`;
       // 定义源插件目录
       const srcPluginDir = path.resolve(rootDir, `src/plugins/${pluginName}`);
+      const distPluginDir = path.resolve(rootDir, 'dist-' + pluginName)
 
       const fullPluginDir = path.resolve(rootDir, pluginDir);
       if (!fs.existsSync(fullPluginDir)) {
@@ -28,7 +29,7 @@ export const copyDist = (pluginName = 'example') => ({
       }
 
       // 复制 app.cjs产物 到目标目录app.js
-      const sourcePath = path.resolve(rootDir, `${pluginName}/app.cjs`);
+      const sourcePath = path.resolve(distPluginDir, 'app.cjs');
       const targetPath = path.resolve(rootDir, targetDir, 'app.js');
 
       if (fs.existsSync(sourcePath)) {
@@ -54,7 +55,7 @@ export const copyDist = (pluginName = 'example') => ({
       }
 
       // 插件的所有样式会放到app.css 里面
-      const cssSourcePath = path.resolve(rootDir, `${pluginName}/app.css`);
+      const cssSourcePath = path.resolve(distPluginDir, 'app.css');
       if (fs.existsSync(cssSourcePath)) {
         const cssTargetPath = path.resolve(rootDir, targetDir, 'app.css');
         copyFileWithMeta(cssSourcePath, cssTargetPath, pluginName);

@@ -57,7 +57,7 @@ const createPluginConfig = (plugin) => {
         fileName: 'app',
         formats: ['cjs'],
       },
-      outDir: plugin, // 每个插件输出到自己的目录
+      outDir: "dist-" + plugin,
       rollupOptions: {
         external: ['vue'],
         output: {
