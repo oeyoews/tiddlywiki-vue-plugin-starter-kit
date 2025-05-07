@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, markRaw, onMounted } from 'vue';
+import { markRaw, onMounted } from 'vue';
 import { useVueFlow, VueFlow, Panel } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
+// @ts-ignore
 import { MiniMap } from '@vue-flow/minimap';
 
 import '@vue-flow/core/dist/style.css';
@@ -13,6 +14,7 @@ import '@vue-flow/minimap/dist/style.css';
 import DefaultNode from './nodes/DefaultNode.vue';
 import TextNode from './nodes/TextNode.vue';
 import ImageNode from './nodes/ImageNode.vue';
+import useDragAndDrop from '../hooks/useDnd';
 
 // 定义节点类型
 const nodeTypes = {
@@ -22,20 +24,8 @@ const nodeTypes = {
 };
 
 // 初始化Vue Flow
-const {
-  onNodesChange,
-  onEdgesChange,
-  onConnect,
-  addNodes,
-  addEdges,
-  nodes,
-  edges,
-  fitView,
-  setNodes,
-  setEdges,
-  getIntersectingNodes,
-  project,
-} = useVueFlow();
+const { onConnect, addNodes, addEdges, fitView, setNodes, setEdges, project } =
+  useVueFlow();
 
 // 初始节点数据
 const initialNodes = [
@@ -62,61 +52,19 @@ onMounted(() => {
 
 // 处理连接
 onConnect((params) => {
-  addEdges(params);
-});
-
-// 处理拖拽开始
-function onDragStart(event: DragEvent, nodeType: string) {
-  if (event.dataTransfer) {
-    event.dataTransfer.setData('application/vueflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
-  }
-}
-
-// 处理拖拽结束
-function onDragOver(event: DragEvent) {
-  event.preventDefault();
-  if (event.dataTransfer) {
-    event.dataTransfer.dropEffect = 'move';
-  }
-}
-
-// 处理放置
-function onDrop(event: DragEvent) {
-  event.preventDefault();
-
-  // 获取拖拽的节点类型
-  const nodeType = event.dataTransfer?.getData('application/vueflow');
-
-  if (!nodeType) return;
-
-  // 获取画布的DOM元素
-  const wrapper = document.querySelector('.vue-flow');
-  if (!wrapper) return;
-
-  // 获取画布的位置和大小
-  const wrapperBounds = wrapper.getBoundingClientRect();
-
-  // 计算放置位置
-  const position = project({
-    x: event.clientX - wrapperBounds.left,
-    y: event.clientY - wrapperBounds.top,
+  // 添加动态连接线，带箭头
+  addEdges({
+    ...params,
+    animated: true,
+    markerEnd: 'arrow', // 添加箭头
   });
-
-  // 创建新节点
-  const newNode = {
-    id: `node_${Date.now()}`,
-    type: nodeType,
-    position,
-    data: { label: `${nodeType} 节点` },
-  };
-
-  // 添加新节点
-  addNodes(newNode);
-}
+});
+// 使用useDragAndDrop钩子获取所有拖拽相关函数
+const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart } =
+  useDragAndDrop();
 
 // 定义组件可接收的属性
-const props = defineProps<{
+defineProps<{
   // 添加你需要的属性，并提供默认值
   title?: string;
   theme?: string;
@@ -133,19 +81,22 @@ const props = defineProps<{
         class="dnd-node"
         draggable
         @dragstart="onDragStart($event, 'default')">
-        默认节点
+        <div class="node-icon">📦</div>
+        <div class="node-label">默认节点</div>
       </div>
       <div
         class="dnd-node"
         draggable
         @dragstart="onDragStart($event, 'text')">
-        文本节点
+        <div class="node-icon">📝</div>
+        <div class="node-label">文本节点</div>
       </div>
       <div
         class="dnd-node"
         draggable
         @dragstart="onDragStart($event, 'image')">
-        图片节点
+        <div class="node-icon">🖼️</div>
+        <div class="node-label">图片节点</div>
       </div>
     </div>
 
@@ -153,14 +104,16 @@ const props = defineProps<{
     <div
       class="flow-wrapper"
       @dragover="onDragOver"
-      @drop="onDrop">
+      @drop="onDrop"
+      @dragleave="onDragLeave"
+      :class="{ 'drag-over': isDragOver }">
       <VueFlow
         :node-types="nodeTypes"
         :default-zoom="1"
-        :min-zoom="0.2"
-        :max-zoom="4">
+        :min-zoom="0.5"
+        :max-zoom="1.5">
         <Background
-          pattern-color="#aaa"
+          pattern-color="#fff"
           :gap="8" />
         <MiniMap />
         <Controls />
@@ -178,46 +131,79 @@ const props = defineProps<{
 .flow-container {
   display: flex;
   width: 100%;
-  height: 600px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  height: 780px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .sidebar {
-  width: 150px;
+  width: 180px;
   background-color: #f8f8f8;
-  padding: 10px;
+  padding: 15px;
   border-right: 1px solid #ddd;
+  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-title {
   font-weight: bold;
-  margin-bottom: 10px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #1976d2;
+  color: #1976d2;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-title::before {
+  content: '🔄';
+  margin-right: 8px;
+  font-size: 18px;
 }
 
 .dnd-node {
-  padding: 10px;
-  margin-bottom: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: white;
   cursor: grab;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .dnd-node:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f8ff;
   transform: translateY(-2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 6px rgba(25, 118, 210, 0.15);
+  border-color: #1976d2;
+}
+
+.node-icon {
+  font-size: 18px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node-label {
+  font-size: 14px;
 }
 
 .flow-wrapper {
   flex: 1;
   height: 100%;
   position: relative;
+  transition: all 0.2s ease;
+}
+
+.flow-wrapper.drag-over {
+  background-color: rgba(25, 118, 210, 0.05);
+  box-shadow: inset 0 0 20px rgba(25, 118, 210, 0.2);
 }
 
 .custom-panel button {
@@ -242,13 +228,33 @@ const props = defineProps<{
 }
 
 :deep(.vue-flow__edge-path) {
-  stroke: #555;
+  stroke: #1976d2; /* 蓝色 */
   stroke-width: 2;
+}
+
+:deep(.vue-flow__edge.animated .vue-flow__edge-path) {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+@keyframes dashdraw {
+  from {
+    stroke-dashoffset: 10;
+  }
 }
 
 :deep(.vue-flow__handle) {
   width: 8px;
   height: 8px;
-  background-color: #555;
+  background-color: #1976d2; /* 蓝色，与连接线颜色匹配 */
+}
+
+/* 添加箭头样式 */
+:deep(.vue-flow__edge-path) {
+  marker-end: url(#vue-flow__arrowhead);
+}
+
+:deep(#vue-flow__arrowhead) {
+  fill: #1976d2; /* 蓝色，与连接线颜色匹配 */
 }
 </style>

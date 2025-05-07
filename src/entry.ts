@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
-import Flow from './plugins/vue-flow/components/Flow.vue';
+import App from './plugins/vue-flow/App.vue';
 
-const app = createApp(Flow);
+const app = createApp(App);
 
 app.mount('#app');
