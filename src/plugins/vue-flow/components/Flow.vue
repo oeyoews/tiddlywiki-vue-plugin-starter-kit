@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { markRaw, onMounted } from 'vue';
-import { useVueFlow, VueFlow, Panel } from '@vue-flow/core';
+import { useVueFlow, VueFlow, Panel, MarkerType } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 // @ts-ignore
@@ -46,7 +46,7 @@ const {
   defaultEdgeOptions: {
     animated: true,
     style: { stroke: '#1976d2', strokeWidth: 1 },
-    markerEnd: 'arrow',
+    markerEnd: 'arrowclosed',
   },
   fitViewOnInit: true,
   minZoom: 0.5,
@@ -58,9 +58,12 @@ const initialNodes = [
   {
     id: '0',
     type: 'image',
-    label: '节点 1',
     position: { x: 150, y: 250 },
     data: { label: '节点 2' },
+    label: 'Marker Arrow',
+    // Use MarkerType enum to set the marker
+    markerEnd: MarkerType.Arrow,
+    markerStart: MarkerType.Arrow,
   },
   {
     id: '1',
@@ -68,6 +71,14 @@ const initialNodes = [
     label: '节点 1',
     position: { x: 50, y: 50 },
     data: { label: '节点 1' },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: '#ff0072',
+    },
+    markerStart: {
+      type: MarkerType.ArrowClosed,
+      color: '#ff0072',
+    },
   },
 ];
 
@@ -93,8 +104,8 @@ onConnect((params) => {
   addEdges({
     ...params,
     animated: true,
-    markerEnd: 'arrow', // 添加箭头
-    style: { stroke: '#1976d2', strokeWidth: 1 },
+    markerEnd: 'arrowclosed', // 添加箭头
+    style: { stroke: '#1976d2', strokeWidth: 1 }, // 增加线宽使箭头更明显
   });
 });
 
@@ -185,6 +196,26 @@ defineProps<{
           markerEnd: 'arrow',
         }"
         class="vue-flow-wrapper">
+        <!-- 添加SVG定义，包含箭头标记 -->
+        <template #connection-marker>
+          <svg>
+            <defs>
+              <marker
+                id="vue-flow__arrowhead"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="8"
+                markerHeight="8"
+                orient="auto-start-reverse">
+                <path
+                  d="M 0 0 L 10 5 L 0 10 z"
+                  fill="#1976d2" />
+              </marker>
+            </defs>
+          </svg>
+        </template>
+
         <Background
           pattern-color="#fff"
           :gap="8" />
@@ -306,18 +337,21 @@ defineProps<{
 
 :deep(.vue-flow__node) {
   border-radius: 4px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
+/* 连接线基本样式 */
 :deep(.vue-flow__edge-path) {
   stroke: #1976d2; /* 蓝色 */
   stroke-width: 1;
   transition: stroke 0.2s ease, stroke-width 0.2s ease; /* 平滑过渡效果 */
+  marker-end: url(#vue-flow__arrowhead); /* 添加箭头 */
 }
 
+/* 动画连接线样式 */
 :deep(.vue-flow__edge.animated .vue-flow__edge-path) {
   stroke-dasharray: 5;
   animation: dashdraw 0.5s linear infinite;
@@ -341,6 +375,7 @@ defineProps<{
   }
 }
 
+/* 连接点样式 */
 :deep(.vue-flow__handle) {
   width: 6px;
   height: 6px;
@@ -357,23 +392,19 @@ defineProps<{
   cursor: crosshair; /* 十字光标 */
 }
 
-/* 添加箭头样式 */
-:deep(.vue-flow__edge-path) {
-  marker-end: url(#vue-flow__arrowhead);
-}
-
-:deep(#vue-flow__arrowhead) {
+/* 箭头样式 */
+:deep(marker#vue-flow__arrowhead) {
   fill: #1976d2; /* 蓝色，与连接线颜色匹配 */
   transition: fill 0.2s ease; /* 平滑过渡效果 */
 }
 
 /* 鼠标悬停时的箭头样式 */
-:deep(.vue-flow__edge:hover #vue-flow__arrowhead) {
+:deep(.vue-flow__edge:hover marker#vue-flow__arrowhead) {
   fill: #2196f3; /* 悬停时颜色变亮 */
 }
 
 /* 选中的箭头样式 */
-:deep(.vue-flow__edge.selected #vue-flow__arrowhead) {
+:deep(.vue-flow__edge.selected marker#vue-flow__arrowhead) {
   fill: #ff9800; /* 选中时为橙色 */
 }
 
@@ -404,12 +435,5 @@ defineProps<{
   position: absolute;
   z-index: 1000;
   opacity: 0.8;
-}
-:deep(.vue-flow__node) {
-  border-radius: 4px;
-  padding: 0px;
-  border: none;
-  background: transparent;
-  box-shadow: none;
 }
 </style>
