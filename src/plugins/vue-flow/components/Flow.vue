@@ -45,7 +45,7 @@ const {
 } = useVueFlow({
   defaultEdgeOptions: {
     animated: true,
-    style: { stroke: '#1976d2', strokeWidth: 2 },
+    style: { stroke: '#1976d2', strokeWidth: 1 },
     markerEnd: 'arrow',
   },
   fitViewOnInit: true,
@@ -94,7 +94,7 @@ onConnect((params) => {
     ...params,
     animated: true,
     markerEnd: 'arrow', // 添加箭头
-    style: { stroke: '#1976d2', strokeWidth: 2 },
+    style: { stroke: '#1976d2', strokeWidth: 1 },
   });
 });
 
@@ -181,7 +181,7 @@ defineProps<{
         :max-zoom="1.5"
         :default-edge-options="{
           animated: true,
-          style: { stroke: '#1976d2', strokeWidth: 2 },
+          style: { stroke: '#1976d2', strokeWidth: 1 },
           markerEnd: 'arrow',
         }"
         class="vue-flow-wrapper">
@@ -314,12 +314,25 @@ defineProps<{
 
 :deep(.vue-flow__edge-path) {
   stroke: #1976d2; /* 蓝色 */
-  stroke-width: 2;
+  stroke-width: 1;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease; /* 平滑过渡效果 */
 }
 
 :deep(.vue-flow__edge.animated .vue-flow__edge-path) {
   stroke-dasharray: 5;
   animation: dashdraw 0.5s linear infinite;
+}
+
+/* 鼠标悬停时的连接线样式 */
+:deep(.vue-flow__edge:hover .vue-flow__edge-path) {
+  stroke: #2196f3; /* 悬停时颜色变亮 */
+  stroke-width: 3; /* 悬停时线条变粗 */
+}
+
+/* 选中的连接线样式 */
+:deep(.vue-flow__edge.selected .vue-flow__edge-path) {
+  stroke: #ff9800; /* 选中时为橙色 */
+  stroke-width: 3; /* 选中时线条变粗 */
 }
 
 @keyframes dashdraw {
@@ -329,9 +342,19 @@ defineProps<{
 }
 
 :deep(.vue-flow__handle) {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   background-color: #1976d2; /* 蓝色，与连接线颜色匹配 */
+  border-radius: 50%; /* 圆形连接点 */
+  border: 2px solid white; /* 白色边框 */
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* 轻微阴影效果 */
+  transition: transform 0.2s ease, background-color 0.2s ease; /* 平滑过渡效果 */
+}
+
+/* 鼠标悬停时的连接点样式 */
+:deep(.vue-flow__handle:hover) {
+  background-color: #2196f3; /* 悬停时颜色变亮 */
+  cursor: crosshair; /* 十字光标 */
 }
 
 /* 添加箭头样式 */
@@ -341,6 +364,17 @@ defineProps<{
 
 :deep(#vue-flow__arrowhead) {
   fill: #1976d2; /* 蓝色，与连接线颜色匹配 */
+  transition: fill 0.2s ease; /* 平滑过渡效果 */
+}
+
+/* 鼠标悬停时的箭头样式 */
+:deep(.vue-flow__edge:hover #vue-flow__arrowhead) {
+  fill: #2196f3; /* 悬停时颜色变亮 */
+}
+
+/* 选中的箭头样式 */
+:deep(.vue-flow__edge.selected #vue-flow__arrowhead) {
+  fill: #ff9800; /* 选中时为橙色 */
 }
 
 /* 拖拽相关样式 */
@@ -370,5 +404,12 @@ defineProps<{
   position: absolute;
   z-index: 1000;
   opacity: 0.8;
+}
+:deep(.vue-flow__node) {
+  border-radius: 4px;
+  padding: 0px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 </style>
