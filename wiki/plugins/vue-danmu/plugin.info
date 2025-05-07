@@ -9,5 +9,5 @@
   "name": "vue-danmu",
   "parent-plugin": "$:/plugins/oeyoews/neotw-vue3",
   "meat#disabled": "yes",
-  "list": "readme"
+  "list": "readme example"
 }

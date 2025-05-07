@@ -9,3 +9,20 @@
 * 自动将构建产物复制到 TiddlyWiki 插件目录
 * 支持向 Vue 组件传递参数
 * 与 TiddlyWiki 无缝集成
+
+## 使用方法
+
+
+```ts
+// entry.ts
+import { createApp } from 'vue'
+import App from './App.vue'
+
+createApp(App).mount('#app')
+```
+
+```bash
+pnpm live ## debug component
+pnpm build ## build tiddlywiki app.js（please update cross-env plugin-name var)
+pnpm dev ## preview tiddlywiki plugin
+```

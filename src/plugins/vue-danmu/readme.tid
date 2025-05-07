@@ -1,5 +1,38 @@
 title: $:/plugins/oeyoews/vue-danmu/readme
 
-!! vue-danmu
+!! TiddlyWiki 弹幕插件 (vue-danmu)
+
+> 基于 [danmaku-vue](https://github.com/dshuais/danmaku-vue) 的 TiddlyWiki 弹幕插件，支持显示 TiddlyWiki 相关内容的弹幕。
+
+!! 基本用法
+
+在任意 tiddler 中使用以下语法插入弹幕组件：
+
+```
+<$vue-danmu />
+```
+
+!! 高级用法
+
+可以通过传递 `title` 参数来自定义弹幕标题：
+
+```
+<$vue-danmu title="我的 TiddlyWiki 弹幕" />
+```
+
+!! 功能特点
+
+* 显示 TiddlyWiki 相关内容的弹幕
+* 支持自定义弹幕样式和行为
+* 弹幕可以包含头像和文本
+* 支持悬停交互功能
+* 支持点击弹幕触发事件
+* 支持循环播放模式
+* 可以控制弹幕轨道数量和速度
+* 字体大小适中，不影响阅读体验
+
+!! 示例
+
+下面是一个弹幕组件的实时示例：
 
 <$vue-danmu />

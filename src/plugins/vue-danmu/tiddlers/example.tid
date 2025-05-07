@@ -1,0 +1,45 @@
+title: $:/plugins/oeyoews/vue-danmu/example
+tags: $:/tags/vue-danmu/example
+caption: 弹幕示例
+
+!! 弹幕组件示例
+
+下面是一个基本的弹幕组件示例：
+
+<$vue-danmu />
+
+!! 自定义标题的弹幕组件
+
+你可以通过传递 `title` 参数来自定义弹幕标题：
+
+<$vue-danmu title="自定义标题弹幕" />
+
+!! 使用场景
+
+弹幕组件可以用于以下场景：
+
+* 在 Wiki 页面上显示实时评论或反馈
+* 展示 TiddlyWiki 中的最新更新或变化
+* 创建互动性更强的文档体验
+* 在演示或教程中突出显示重要信息
+* 为长篇文档添加有趣的互动元素
+
+!! 技术说明
+
+此弹幕组件基于 [danmaku-vue](https://github.com/dshuais/danmaku-vue) 开发，并针对 TiddlyWiki 环境进行了优化。它支持以下功能：
+
+* 自定义弹幕内容和样式
+* 弹幕悬停交互
+* 点击弹幕触发事件
+* 循环播放模式
+* 控制弹幕轨道数量和速度
+
+!! 如何集成到你的 TiddlyWiki 中
+
+1. 安装 vue-danmu 插件
+2. 在任意 tiddler 中使用 `<$vue-danmu />` 标签
+3. 根据需要自定义弹幕内容和行为
+
+!! 高级定制
+
+如果你想使用自己的 TiddlyWiki 数据作为弹幕内容，可以修改插件源码中的 `getTiddlyWikiData` 函数，使其返回你想要的数据格式。
