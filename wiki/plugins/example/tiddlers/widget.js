@@ -56,5 +56,4 @@ class ExampleWidget extends Widget {
   }
 }
 
-/** @description vue-rss widget */
 exports['example'] = ExampleWidget;

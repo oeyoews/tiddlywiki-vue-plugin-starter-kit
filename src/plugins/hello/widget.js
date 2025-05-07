@@ -1,12 +1,12 @@
 /*\
-title: $:/plugins/oeyoews/example/widget.js
+title: $:/plugins/oeyoews/hello/widget.js
 type: application/javascript
 module-type: widget
 
 \*/
 const { widget: Widget } = require('$:/core/modules/widgets/widget.js');
 
-class ExampleWidget extends Widget {
+class PluginHelloWidget extends Widget {
   constructor(parseTreeNode, options) {
     super(parseTreeNode, options);
   }
@@ -32,7 +32,7 @@ class ExampleWidget extends Widget {
     const component = require('./app');
     const domNode = this.document.createElement('div');
     const props = {
-      title: title|| "Hello tw"
+      title: title || "hello"
     }
 
     try {
@@ -40,7 +40,7 @@ class ExampleWidget extends Widget {
 
       app.config.errorHandler = (err) => {
         const text = `[Vue3](${app.version}): ` + err;
-        console.error(text, '(example plugin)');
+        console.error(text, '(hello plugin)');
         domNode.textContent = text;
         domNode.style.color = 'red';
       };
@@ -51,9 +51,9 @@ class ExampleWidget extends Widget {
       parent.insertBefore(domNode, nextSibling);
       this.domNodes.push(domNode);
     } catch (e) {
-      console.error(e.message, 'example plugin');
+      console.error(e.message, 'hello plugin');
     }
   }
 }
 
-exports['example'] = ExampleWidget;
+exports['hello'] = PluginHelloWidget;

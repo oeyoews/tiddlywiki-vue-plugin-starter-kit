@@ -46,6 +46,7 @@ const buildPlugin = (pluginName) => {
 
     // 使用环境变量传递插件名称
     const env = { ...process.env, PLUGIN_NAME: pluginName };
+    console.log(env)
 
     exec(`vite build`, { cwd: rootDir, env }, (error, stdout, stderr) => {
       if (error) {
