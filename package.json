@@ -4,19 +4,24 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "live": "vite",
     "dev": "tiddlywiki ./wiki --listen",
-    "build": "cross-env PLUGIN_NAME='example' vite build --mode=prod",
+    "build": "cross-env PLUGIN_NAME='vue-flow' vite build --mode=prod",
     "build:plugin": "vite build",
     "build:all": "node scripts/build-all-plugins.js",
     "new": "node scripts/create-plugin.js"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
+    "@vue-flow/background": "^1.3.2",
+    "@vue-flow/controls": "^1.1.2",
+    "@vue-flow/core": "^1.43.1",
+    "@vue-flow/minimap": "^1.5.3",
     "@vue/tsconfig": "^0.7.0",
+    "cross-env": "^7.0.3",
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
     "vue": "^3.5.13",
-    "cross-env": "^7.0.3",
     "vue-tsc": "^2.2.8"
   },
   "dependencies": {

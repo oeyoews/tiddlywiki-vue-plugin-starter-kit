@@ -9,11 +9,3 @@
 * 自动将构建产物复制到 TiddlyWiki 插件目录
 * 支持向 Vue 组件传递参数
 * 与 TiddlyWiki 无缝集成
-
-## TODO
-
-* [x] 支持多插件构建
-* [ ] 图片等assets
-* [ ] 单个插件构建env
-
-

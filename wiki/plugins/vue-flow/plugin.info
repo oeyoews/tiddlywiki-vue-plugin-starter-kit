@@ -1,13 +1,13 @@
 {
-  "title": "$:/plugins/{{author}}/{{pluginName}}",
-  "description": "{{description}}",
-  "author": "{{author}}",
+  "title": "$:/plugins/oeyoews/vue-flow",
+  "description": "vue-flow",
+  "author": "oeyoews",
   "version": "0.1.0",
   "core-version": ">=5.3.6",
   "type": "application/json",
   "plugin-type": "plugin",
-  "name": "{{pluginName}}",
   "parent-plugin": "$:/plugins/oeyoews/neotw-vue3",
+  "name": "vue-flow",
   "meat#disabled": "yes",
   "list": "readme"
 }

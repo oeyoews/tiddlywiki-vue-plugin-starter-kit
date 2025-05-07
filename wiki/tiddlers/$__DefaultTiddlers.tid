@@ -1,6 +1,6 @@
 created: 20250506122602109
-modified: 20250506125444321
+modified: 20250507132241071
 title: $:/DefaultTiddlers
 type: text/vnd.tiddlywiki
 
-[list[$:/StoryList]]
+$:/plugins/oeyoews/vue-flow [list[$:/StoryList]]

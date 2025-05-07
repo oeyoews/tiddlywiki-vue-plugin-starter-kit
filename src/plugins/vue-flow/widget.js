@@ -1,12 +1,12 @@
 /*\
-title: $:/plugins/oeyoews/hello/widget.js
+title: $:/plugins/oeyoews/vue-flow/widget.js
 type: application/javascript
 module-type: widget
 
 \*/
 const { widget: Widget } = require('$:/core/modules/widgets/widget.js');
 
-class PluginHelloWidget extends Widget {
+class PluginVueFlowWidget extends Widget {
   constructor(parseTreeNode, options) {
     super(parseTreeNode, options);
   }
@@ -26,21 +26,21 @@ class PluginHelloWidget extends Widget {
       window.Vue = require(vuelib);
       window.vue = require(vuelib);
     }
-    const {title} = this.attributes;
+    const { title } = this.attributes;
 
     const { createApp } = window.Vue;
     const component = require('./app');
     const domNode = this.document.createElement('div');
     const props = {
-      title: title || "hello"
-    }
+      title: title || 'vue-flow',
+    };
 
     try {
       const app = createApp(component(props)());
 
       app.config.errorHandler = (err) => {
         const text = `[Vue3](${app.version}): ` + err;
-        console.error(text, '(hello plugin)');
+        console.error(text, '(vue-flow plugin)');
         domNode.textContent = text;
         domNode.style.color = 'red';
       };
@@ -51,9 +51,9 @@ class PluginHelloWidget extends Widget {
       parent.insertBefore(domNode, nextSibling);
       this.domNodes.push(domNode);
     } catch (e) {
-      console.error(e.message, 'hello plugin');
+      console.error(e.message, 'vue-flow plugin');
     }
   }
 }
 
-exports['hello'] = PluginHelloWidget;
+exports['vue-flow'] = PluginVueFlowWidget;

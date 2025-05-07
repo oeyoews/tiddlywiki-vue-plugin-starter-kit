@@ -15,21 +15,23 @@ const getPluginDirs = () => {
     return [];
   }
 
-  return fs.readdirSync(pluginsDir)
-    .filter(dir => {
-      const dirPath = path.join(pluginsDir, dir);
-      // 检查是否是目录
-      if (!fs.statSync(dirPath).isDirectory()) {
-        return false;
-      }
+  return fs.readdirSync(pluginsDir).filter((dir) => {
+    const dirPath = path.join(pluginsDir, dir);
+    // 检查是否是目录
+    if (!fs.statSync(dirPath).isDirectory()) {
+      return false;
+    }
 
-      // 检查src/plugins/[dir]目录下是否有plugin.info文件
-      const pluginInfoPath = path.join(dirPath, 'plugin.info');
-      // 如果没有plugin.info文件，检查wiki/plugins/[dir]目录下是否有plugin.info文件
-      const wikiPluginInfoPath = path.resolve(__dirname, `wiki/plugins/${dir}/plugin.info`);
+    // 检查src/plugins/[dir]目录下是否有plugin.info文件
+    const pluginInfoPath = path.join(dirPath, 'plugin.info');
+    // 如果没有plugin.info文件，检查wiki/plugins/[dir]目录下是否有plugin.info文件
+    const wikiPluginInfoPath = path.resolve(
+      __dirname,
+      `wiki/plugins/${dir}/plugin.info`
+    );
 
-      return fs.existsSync(pluginInfoPath) || fs.existsSync(wikiPluginInfoPath);
-    });
+    return fs.existsSync(pluginInfoPath) || fs.existsSync(wikiPluginInfoPath);
+  });
 };
 
 // 获取要构建的插件列表
@@ -57,7 +59,7 @@ const createPluginConfig = (plugin) => {
         fileName: 'app',
         formats: ['cjs'],
       },
-      outDir: "dist-" + plugin,
+      outDir: 'dist-' + plugin,
       rollupOptions: {
         external: ['vue'],
         output: {
@@ -70,8 +72,16 @@ const createPluginConfig = (plugin) => {
     },
     plugins: [
       vue(),
-      copyDist(plugin) // 传递插件名称给copyDist
+      copyDist(plugin), // 传递插件名称给copyDist
     ],
+    define: {
+      // 替换 process.env 为具体值
+      'process.env': JSON.stringify(process.env),
+      // 或者只替换特定环境变量
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'production'
+      ),
+    },
   });
 };
 

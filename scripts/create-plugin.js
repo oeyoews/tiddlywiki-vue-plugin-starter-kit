@@ -4,58 +4,61 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import readline from 'readline';
 
-// 获取当前文件的目录
+// Get current file directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const templatesDir = path.resolve(__dirname, 'templates');
 
-// 创建命令行交互界面
+// Create command line interface
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
-// 默认作者名
+// Default author name
 const DEFAULT_AUTHOR = 'oeyoews';
 
-// 询问插件名称
-rl.question('请输入插件名称: ', (pluginName) => {
+// Ask for plugin name
+rl.question('Enter plugin name: ', (pluginName) => {
   if (!pluginName) {
-    console.error('错误: 插件名称不能为空');
+    console.error('Error: Plugin name cannot be empty');
     rl.close();
     return;
   }
 
-  // 询问插件描述
-  rl.question('请输入插件描述 (可选): ', (description) => {
-    // 如果没有提供描述，使用插件名称作为描述
+  // Ask for plugin description
+  rl.question('Enter plugin description (optional): ', (description) => {
+    // If no description provided, use plugin name as description
     description = description || pluginName;
 
-    // 询问作者名称
-    rl.question(`请输入作者名称 (默认: ${DEFAULT_AUTHOR}): `, (author) => {
-      // 如果没有提供作者名称，使用默认值
-      author = author || DEFAULT_AUTHOR;
+    // Ask for author name
+    rl.question(
+      `Enter author name (default: ${DEFAULT_AUTHOR}): `,
+      (author) => {
+        // If no author name provided, use default value
+        author = author || DEFAULT_AUTHOR;
 
-      // 显示将要创建的插件信息
-      console.log('\n将要创建以下插件:');
-      console.log(`- 插件名称: ${pluginName}`);
-      console.log(`- 插件描述: ${description}`);
-      console.log(`- 作者名称: ${author}`);
-      console.log(`- 源目录: src/plugins/${pluginName}`);
-      console.log(`- 目标目录: wiki/plugins/${pluginName}`);
+        // Display plugin information to be created
+        console.log('\nThe following plugin will be created:');
+        console.log(`- Plugin name: ${pluginName}`);
+        console.log(`- Plugin description: ${description}`);
+        console.log(`- Author name: ${author}`);
+        console.log(`- Source directory: src/plugins/${pluginName}`);
+        console.log(`- Target directory: wiki/plugins/${pluginName}`);
 
-      // 询问是否确认创建
-      rl.question('\n确认创建插件? (y/n): ', (answer) => {
-        if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
-          // 创建插件
-          createPlugin(pluginName, description, author);
-        } else {
-          console.log('已取消创建插件');
-        }
-        rl.close();
-      });
-    });
+        // Ask for confirmation
+        rl.question('\nConfirm plugin creation? (y/n): ', (answer) => {
+          if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
+            // Create plugin
+            createPlugin(pluginName, description, author);
+          } else {
+            console.log('Plugin creation cancelled');
+          }
+          rl.close();
+        });
+      }
+    );
   });
 });
 
@@ -89,7 +92,7 @@ function createPlugin(pluginName, description, author) {
     pluginName,
     description,
     author,
-    capitalizedPluginName: capitalizeFirstLetter(pluginName)
+    capitalizedPluginName: capitalizeFirstLetter(pluginName),
   };
 
   // 创建 plugin.info 文件
@@ -134,7 +137,7 @@ function createPlugin(pluginName, description, author) {
 
   console.log(`\n✅ 插件 ${pluginName} 创建成功!`);
   console.log(`\n使用以下命令构建插件:`);
-  console.log(`npm run build:plugin --name=${pluginName}`);
+  // console.log(`npm run build:plugin --name=${pluginName}`);
   console.log(`\n或者构建所有插件:`);
   console.log(`npm run build:all`);
 }
@@ -171,10 +174,13 @@ function createFileFromTemplate(templateName, outputPath, vars) {
 }
 
 /**
- * 首字母大写
+ * 首字母大写并替换所有非英文字符
  * @param {string} str 字符串
- * @returns {string} 首字母大写的字符串
+ * @returns {string} 首字母大写且只保留英文字符的字符串
  */
 function capitalizeFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  // 首字母大写
+  const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
+  // 替换所有非英文字符（保留字母、数字和下划线）
+  return capitalized.replace(/[^a-zA-Z0-9_]/g, '');
 }
