@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { markRaw, onMounted } from 'vue';
-import {    ConnectionMode, useVueFlow, VueFlow, Panel, MarkerType } from '@vue-flow/core';
+import { ConnectionMode, useVueFlow, VueFlow, Panel, } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 // @ts-ignore
@@ -19,7 +19,7 @@ import ProcessNode from './nodes/ProcessNode.vue';
 import DataNode from './nodes/DataNode.vue';
 import StartNode from './nodes/StartNode.vue';
 import useDragAndDrop from '../hooks/useDnD';
-import { initialEdges, initialNodes } from '../constant';
+import { initialEdges, initialNodes, DEFAULT_MARKER_END } from '../constant/index';
 
 // 定义节点类型
 const nodeTypes = {
@@ -78,13 +78,7 @@ onMounted(() => {
       target: params.target,
       animated: true,
       style: { stroke: '#1890ff', strokeWidth: 2 },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: '#1890ff',
-        width: 16,
-        height: 16,
-        strokeWidth: 0.1
-      }
+      markerEnd: DEFAULT_MARKER_END
     }]);
   });
   const onNodeClick = () => { };
@@ -99,13 +93,7 @@ onMounted(() => {
         target: params.target,
         animated: true,
         style: { stroke: '#1890ff', strokeWidth: 2 },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: '#1890ff',
-          width: 16,
-          height: 16,
-          strokeWidth: 0.1
-        }
+        markerEnd: DEFAULT_MARKER_END
       }])
   }
 
@@ -161,13 +149,7 @@ defineProps<{
         :snap-to-grid="true" :snap-grid="[20, 20]" :default-edge-options="{
             animated: true,
             style: { stroke: '#1890ff', strokeWidth: 2 },
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              color: '#1890ff',
-              width: 16,
-              height: 16,
-              strokeWidth: 0.1
-            }
+            markerEnd: DEFAULT_MARKER_END
           }" :connection-mode="ConnectionMode.Loose" @drop="onDrop" @dragover="onDragOver" @dragleave="onDragLeave"
         @connect="handleConnect" @node-click="onNodeClick" :connection-radius="30" auto-connect fit-view-on-init
         class="vue-flow-wrapper">
@@ -410,3 +392,6 @@ defineProps<{
   }
 
 </style>
+
+
+
