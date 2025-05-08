@@ -5,6 +5,8 @@
   //   { "path": "./tsconfig.node.json" }
   // ],
   "compilerOptions": {
+    "target": "ES2021",
+    "moduleResolution": "node",
     "paths": {
       "@/*": ["./src/*"]
     }

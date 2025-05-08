@@ -8,11 +8,11 @@ const props = defineProps<NodeProps>()
 <template>
   <div class="default-node">
     <!-- 输入连接点 -->
-    <Handle
+    <!-- <Handle
       type="target"
       :position="Position.Left"
       :node-id="props.id"
-    />
+    /> -->
 
     <!-- 节点内容 -->
     <div class="node-content">

@@ -22,7 +22,7 @@ createApp(App).mount('#app')
 ```
 
 ```bash
-pnpm live ## debug component
+pnpm dev ## debug component
 pnpm build ## build tiddlywiki app.js（please update cross-env plugin-name var)
-pnpm dev ## preview tiddlywiki plugin
+pnpm start ## preview tiddlywiki plugin
 ```

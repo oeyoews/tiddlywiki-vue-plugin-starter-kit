@@ -23,7 +23,7 @@ export const initialNodes = [
     position: { x: 320, y: 50 },
     data: {
       label: 'TiddlyWiki Logo',
-      imageUrl: '/src/plugins/vue-flow/assets/tiddlywiki-icon.svg'
+      imageUrl: '/src/plugins/vue-flow/assets/tiddlywiki-icon.svg',
     },
   },
   {
@@ -38,7 +38,7 @@ export const initialNodes = [
 2. Tag：用于组织和分类Tiddler的标签系统
 3. WikiText：TiddlyWiki的标记语言，用于格式化内容
 4. Transclusion：在一个Tiddler中嵌入另一个Tiddler的内容
-5. Filter：用于查询和筛选Tiddler的表达式`
+5. Filter：用于查询和筛选Tiddler的表达式`,
     },
   },
   {
@@ -57,14 +57,13 @@ export const initialNodes = [
     position: { x: 620, y: 250 },
     data: {
       label: 'TiddlyWiki数据结构',
-      dataType: 'JSON',
-      fields: [
-        { key: 'title', value: 'Tiddler标题' },
-        { key: 'text', value: 'Tiddler内容' },
-        { key: 'tags', value: '标签列表' },
-        { key: 'created', value: '创建时间' },
-        { key: 'modified', value: '修改时间' },
-      ],
+      dataType: 'Tiddler',
+      fields: {
+        tags: ['插件', '扩展', '社区'],
+        created: '20250508020312652',
+        title: "TiddlyWiki数据结构",
+        description: "tiddler desc"
+      },
     },
   },
   {
@@ -74,7 +73,8 @@ export const initialNodes = [
     data: {
       label: 'TiddlyWiki插件系统',
       title: '插件生态系统',
-      content: 'TiddlyWiki拥有丰富的插件生态系统，可以扩展其功能。常见插件包括：Markdown支持、任务管理、图表生成、主题美化等。',
+      content:
+        'TiddlyWiki拥有丰富的插件生态系统，可以扩展其功能。常见插件包括：Markdown支持、任务管理、图表生成、主题美化等。',
       tags: ['插件', '扩展', '社区'],
     },
   },
@@ -92,7 +92,7 @@ export const initialNodes = [
 2013年：TiddlyWiki 5发布，完全重写，使用JavaScript和HTML5。
 2014年：引入了插件系统，大大增强了扩展性。
 2015-2020：社区蓬勃发展，出现了大量插件和主题。
-2021年至今：持续发展，成为个人知识管理的重要工具。`
+2021年至今：持续发展，成为个人知识管理的重要工具。`,
     },
   },
   {
@@ -102,7 +102,8 @@ export const initialNodes = [
     data: {
       label: 'TiddlyWiki使用场景',
       title: '应用场景',
-      content: 'TiddlyWiki适用于多种场景：个人知识管理、项目文档、研究笔记、日记、任务管理、写作、教学材料整理等。',
+      content:
+        'TiddlyWiki适用于多种场景：个人知识管理、项目文档、研究笔记、日记、任务管理、写作、教学材料整理等。',
       tags: ['应用', '场景', '实践'],
     },
   },

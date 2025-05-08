@@ -174,7 +174,7 @@ export default function useDragAndDrop() {
           : {}),
         ...(nodeType === 'data'
           ? {
-              dataType: 'JSON',
+              dataType: 'Tiddler',
               fields: [
                 { key: 'id', value: '001' },
                 { key: 'name', value: '示例数据' },

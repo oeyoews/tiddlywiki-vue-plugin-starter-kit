@@ -2,90 +2,50 @@
 import { Position, NodeProps, Handle } from '@vue-flow/core'
 import { ref } from 'vue'
 
+const supportedFields = ['title', 'created']
+
 // 获取节点属性
 const props = defineProps<NodeProps>()
 
-// 编辑状态
-const isEditing = ref(false)
-const editValue = ref('')
+const filterFields = (fields: any) => Object.keys(fields).filter(key => supportedFields.includes(key)).map(key => ({ key, value: fields[key] }))
 
-// 开始编辑
-function startEdit(key: string) {
-  if (!props.data || !props.data.fields) return
+const fields = filterFields(props.data.fields)
+const tagsList = props.data.fields?.tags || []
+// TODO: color support
 
-  const field = props.data.fields.find(f => f.key === key)
-  if (field) {
-    editValue.value = field.value
-    isEditing.value = true
-  }
+const handleNodeClick = () => {
+  console.log('node clicked', props.data.fields.title)
 }
 
-// 保存编辑
-function saveEdit(key: string) {
-  if (!props.data || !props.data.fields) return
-
-  const fieldIndex = props.data.fields.findIndex(f => f.key === key)
-  if (fieldIndex !== -1) {
-    props.data.fields[fieldIndex].value = editValue.value
-  }
-
-  isEditing.value = false
-}
 </script>
 
 <template>
-  <div class="data-node">
+  <div class="data-node" @click="handleNodeClick">
     <!-- 输入连接点 -->
-    <Handle
-      type="target"
-      :position="Position.Left"
-      :node-id="props.id"
-    />
+    <Handle type="target" :position="Position.Left" :node-id="props.id" />
 
     <!-- 节点内容 -->
     <div class="data-header">
-      <div class="data-type">{{ props.data?.dataType || '数据' }}</div>
-      <div class="data-name">{{ props.data?.label || '数据节点' }}</div>
+      <div class="data-name">{{ props.data?.fields.title || 'Tiddler title' }}</div>
     </div>
 
     <div class="data-fields">
-      <div v-if="!props.data?.fields || props.data.fields.length === 0" class="no-fields">
-        无数据字段
-      </div>
-      <div
-        v-else
-        v-for="field in props.data.fields"
-        :key="field.key"
-        class="field-row"
-      >
+      <div v-for="(field, index) in fields" :key="index" class="field-row"><!-- tags -->
         <div class="field-key">{{ field.key }}:</div>
-        <div
-          v-if="isEditing && editValue === field.value"
-          class="field-value-edit"
-        >
-          <input
-            v-model="editValue"
-            @blur="saveEdit(field.key)"
-            @keyup.enter="saveEdit(field.key)"
-            ref="inputRef"
-          />
-        </div>
-        <div
-          v-else
-          class="field-value"
-          @dblclick="startEdit(field.key)"
-        >
+        <div class="field-value">
           {{ field.value }}
         </div>
+      </div>
+
+      <div v-if="tagsList.length > 0" class="card-tags">
+        <span v-for="(tag, index) in tagsList" :key="index" class="tag">
+          {{ tag }}
+        </span>
       </div>
     </div>
 
     <!-- 输出连接点 -->
-    <Handle
-      type="source"
-      :position="Position.Right"
-      :node-id="props.id"
-    />
+    <Handle type="source" :position="Position.Right" :node-id="props.id" />
   </div>
 </template>
 
@@ -95,7 +55,7 @@ function saveEdit(key: string) {
   border-radius: 6px;
   background-color: white;
   border: 1px solid #9c27b0;
-  width: 200px;
+  width: 300px;
   position: relative;
 }
 
@@ -171,4 +131,19 @@ function saveEdit(key: string) {
   border: 1px solid #9c27b0;
   border-radius: 3px;
 }
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  font-size: 11px;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
 </style>
+

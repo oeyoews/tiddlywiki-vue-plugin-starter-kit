@@ -59,8 +59,8 @@ const {
 
 // 设置初始节点和边
 onMounted(() => {
-  setNodes(initialNodes);
-  setEdges(initialEdges);
+  // setNodes(initialNodes);
+  // setEdges(initialEdges);
 
   // 使用onPaneReady确保画布已准备好
   onPaneReady(() => {
@@ -115,13 +115,13 @@ const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart } =
 
 // 定义节点类型数据
 const nodeCategories = [
-      { type: 'start', icon: '▶', label: '开始节点' },
-      { type: 'default', icon: '📦', label: '默认节点' },
-      { type: 'text', icon: '📝', label: '文本节点' },
-      { type: 'image', icon: '🖼️', label: '图片节点' },
-      { type: 'card', icon: '🗂️', label: '卡片节点' },
-      { type: 'process', icon: '⚙️', label: '流程节点' },
-      { type: 'data', icon: '📊', label: '数据节点' },
+      { type: 'start', icon: '📦', label: '开始节点' },
+      // { type: 'default', icon: '▶', label: '默认节点' },
+      // { type: 'text', icon: '📝', label: '文本节点' },
+      // { type: 'image', icon: '🖼️', label: '图片节点' },
+      // { type: 'card', icon: '🗂️', label: '卡片节点' },
+      // { type: 'process', icon: '⚙️', label: '流程节点' },
+      { type: 'data', icon: '📊', label: 'Tiddler节点' },
 ];
 
 // 检测是否为小屏幕设备（宽度小于768px）

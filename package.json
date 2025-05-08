@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "live": "vite",
-    "dev": "tiddlywiki ./wiki --listen",
+    "dev": "vite",
+    "start": "tiddlywiki ./wiki --listen",
     "build": "cross-env PLUGIN_NAME='vue-flow' vite build --mode=prod",
     "build:plugin": "vite build",
     "build:all": "node scripts/build-all-plugins.js",
