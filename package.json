@@ -26,6 +26,7 @@
     "vue-tsc": "^2.2.8"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.4",
     "danmaku-vue": "^1.0.2",
     "tiddlywiki": "^5.3.6"
   }

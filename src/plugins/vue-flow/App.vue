@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import Flow from './components/Flow.vue';
+import { initialNodes, initialEdges } from './constant';
 
 import { FlowProps } from '@/plugins/vue-flow/vue-flow-types';
 withDefaults(defineProps<FlowProps>(), {
   data: () => ({
-    nodes: [],
-    edges: [],
+    nodes: initialNodes as any,
+    edges: initialEdges as any,
   }),
 });
 </script>

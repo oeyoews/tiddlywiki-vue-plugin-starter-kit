@@ -25,6 +25,7 @@ import ProcessNode from './nodes/ProcessNode.vue';
 import DataNode from './nodes/DataNode.vue';
 import StartNode from './nodes/StartNode.vue';
 import useDragAndDrop from '../hooks/useDnD';
+import useAutoLayout from '../hooks/useAutoLayout';
 import { DEFAULT_MARKER_END } from '../constant/index';
 
 import { type FlowProps } from '@/plugins/vue-flow/vue-flow-types';
@@ -45,14 +46,11 @@ const nodeTypes = {
 // 初始化Vue Flow
 const {
   onConnect,
-  addNodes,
   addEdges,
   fitView,
   setNodes,
   setEdges,
-  project,
   onNodeDragStart,
-  onNodeDrag,
   onNodeDragStop,
   onPaneReady,
 } = useVueFlow({
@@ -159,6 +157,16 @@ const showSidebar = ref(false);
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
+
+// 使用自动排序hook
+const { applyHorizontalLayout, applyVerticalLayout } = useAutoLayout({
+  // 默认使用水平布局
+  direction: 'LR',
+  nodeWidth: 180,
+  nodeHeight: 80,
+  nodesep: 80,
+  ranksep: 100,
+});
 </script>
 
 <template>
@@ -249,7 +257,19 @@ const toggleSidebar = () => {
         <Panel
           position="top-right"
           class="custom-panel">
-          <button @click="fitView({ padding: 0.2 })">适应视图</button>
+          <div class="panel-buttons">
+            <button @click="fitView({ padding: 0.2 })">适应视图</button>
+            <button
+              @click="applyHorizontalLayout"
+              class="auto-layout-btn">
+              水平排序
+            </button>
+            <button
+              @click="applyVerticalLayout"
+              class="auto-layout-btn vertical-btn">
+              垂直排序
+            </button>
+          </div>
         </Panel>
       </VueFlow>
     </div>
@@ -418,6 +438,11 @@ const toggleSidebar = () => {
   /* 移除阴影效果 */
 }
 
+.custom-panel .panel-buttons {
+  display: flex;
+  gap: 8px;
+}
+
 .custom-panel button {
   padding: 6px 12px;
   background-color: #4caf50;
@@ -425,10 +450,30 @@ const toggleSidebar = () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
 }
 
 .custom-panel button:hover {
   background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-panel .auto-layout-btn {
+  background-color: #2196f3;
+}
+
+.custom-panel .auto-layout-btn:hover {
+  background-color: #0b7dda;
+}
+
+.custom-panel .vertical-btn {
+  background-color: #ff9800;
+}
+
+.custom-panel .vertical-btn:hover {
+  background-color: #e68a00;
 }
 
 :deep(.vue-flow__node) {

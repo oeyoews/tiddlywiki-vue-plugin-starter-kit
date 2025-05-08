@@ -6,7 +6,7 @@ export const DEFAULT_MARKER_END = {
   color: '#1890ff',
   width: 16,
   height: 16,
-  strokeWidth: 0.1
+  strokeWidth: 0.1,
 };
 
 // 初始节点数据
@@ -61,8 +61,8 @@ export const initialNodes = [
       fields: {
         tags: ['插件', '扩展', '社区'],
         created: '20250508020312652',
-        title: "TiddlyWiki数据结构",
-        description: "tiddler desc"
+        title: 'TiddlyWiki数据结构',
+        description: 'tiddler desc',
       },
     },
   },
@@ -147,7 +147,7 @@ export const initialEdges = [
     source: '0',
     target: '3',
     animated: true,
-    type: 'straight',
+    type: 'smoothstep',
     style: { stroke: '#1890ff', strokeWidth: 2 },
     markerEnd: DEFAULT_MARKER_END,
   },
@@ -200,8 +200,5 @@ export const initialEdges = [
     type: 'straight',
     style: { stroke: '#1890ff', strokeWidth: 2 },
     markerEnd: DEFAULT_MARKER_END,
-  }
+  },
 ];
-
-
-
