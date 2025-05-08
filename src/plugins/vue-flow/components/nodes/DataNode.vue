@@ -1,51 +1,71 @@
 <script setup lang="ts">
-import { Position, NodeProps, Handle } from '@vue-flow/core'
-import { ref } from 'vue'
+import { Position, NodeProps, Handle } from '@vue-flow/core';
+// import { ref } from 'vue';
 
-const supportedFields = ['title', 'created']
+const supportedFields = ['title', 'creator', 'description', 'url'];
 
 // 获取节点属性
-const props = defineProps<NodeProps>()
+const props = defineProps<NodeProps>();
 
-const filterFields = (fields: any) => Object.keys(fields).filter(key => supportedFields.includes(key)).map(key => ({ key, value: fields[key] }))
+const filterFields = (fields: any) =>
+  Object.keys(fields)
+    .filter((key) => supportedFields.includes(key))
+    .map((key) => ({ key, value: fields[key] }));
 
-const fields = filterFields(props.data.fields)
-const tagsList = props.data.fields?.tags || []
+const fields = filterFields(props.data.fields);
+const tagsList = props.data.fields?.tags || [];
 // TODO: color support
 
-const handleNodeClick = () => {
-  console.log('node clicked', props.data.fields.title)
-}
-
+const title = props.data.fields.title;
+const handleNodeClick = () => new $tw.Story().navigateTiddler(title);
 </script>
 
 <template>
-  <div class="data-node" @click="handleNodeClick">
+  <div
+    class="data-node"
+    @click="handleNodeClick">
     <!-- 输入连接点 -->
-    <Handle type="target" :position="Position.Left" :node-id="props.id" />
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :node-id="props.id" />
 
     <!-- 节点内容 -->
     <div class="data-header">
-      <div class="data-name">{{ props.data?.fields.title || 'Tiddler title' }}</div>
+      <div class="data-name">
+        {{ props.data?.fields.title || 'Tiddler title' }}
+      </div>
     </div>
 
     <div class="data-fields">
-      <div v-for="(field, index) in fields" :key="index" class="field-row"><!-- tags -->
+      <div
+        v-for="(field, index) in fields"
+        :key="index"
+        class="field-row">
+        <!-- tags -->
         <div class="field-key">{{ field.key }}:</div>
         <div class="field-value">
           {{ field.value }}
         </div>
       </div>
 
-      <div v-if="tagsList.length > 0" class="card-tags">
-        <span v-for="(tag, index) in tagsList" :key="index" class="tag">
+      <div
+        v-if="tagsList.length > 0"
+        class="card-tags">
+        <span
+          v-for="(tag, index) in tagsList"
+          :key="index"
+          class="tag">
           {{ tag }}
         </span>
       </div>
     </div>
 
     <!-- 输出连接点 -->
-    <Handle type="source" :position="Position.Right" :node-id="props.id" />
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :node-id="props.id" />
   </div>
 </template>
 
@@ -146,4 +166,3 @@ const handleNodeClick = () => {
   border-radius: 4px;
 }
 </style>
-

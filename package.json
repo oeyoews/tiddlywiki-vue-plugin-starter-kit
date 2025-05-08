@@ -19,6 +19,7 @@
     "@vue-flow/minimap": "^1.5.3",
     "@vue/tsconfig": "^0.7.0",
     "cross-env": "^7.0.3",
+    "tw5-typed": "^0.6.3",
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
     "vue": "^3.5.13",

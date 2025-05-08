@@ -26,13 +26,37 @@ class PluginVueFlowWidget extends Widget {
       window.Vue = require(vuelib);
       window.vue = require(vuelib);
     }
-    const { title } = this.attributes;
+    const { filter = '[!is[system]]' } = this.attributes;
+
+    const tiddlers = $tw.wiki.filterTiddlers(filter);
+
+    const getNodes = (tiddlers) => {
+      return tiddlers.map((tiddler, index) => {
+        const { text, ...fields } = $tw.wiki.getTiddler(tiddler)?.fields;
+        const data = {
+          id: `tiddler_${index}`,
+          type: 'data',
+          position: { x: 20, y: 250 + index * 100 },
+          data: {
+            label: tiddler,
+            dataType: 'Tiddler',
+            fields,
+          },
+        };
+        return data;
+      });
+    };
+
+    const data = {
+      nodes: getNodes(tiddlers),
+      edges: [],
+    };
 
     const { createApp } = window.Vue;
     const component = require('./app');
     const domNode = this.document.createElement('div');
     const props = {
-      title: title || 'vue-flow',
+      data,
     };
 
     try {

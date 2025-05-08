@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { markRaw, onMounted, ref } from 'vue';
-import { ConnectionMode, useVueFlow, VueFlow, Panel, Position, } from '@vue-flow/core';
-import { Background } from '@vue-flow/background';
+import {
+  ConnectionMode,
+  useVueFlow,
+  VueFlow,
+  Panel,
+  Position,
+} from '@vue-flow/core';
+// import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 // @ts-ignore
-import { MiniMap } from '@vue-flow/minimap';
+// import { MiniMap } from '@vue-flow/minimap';
 
 import '@vue-flow/core/dist/style.css';
 import '@vue-flow/controls/dist/style.css';
@@ -19,7 +25,11 @@ import ProcessNode from './nodes/ProcessNode.vue';
 import DataNode from './nodes/DataNode.vue';
 import StartNode from './nodes/StartNode.vue';
 import useDragAndDrop from '../hooks/useDnD';
-import { initialEdges, initialNodes, DEFAULT_MARKER_END } from '../constant/index';
+import { DEFAULT_MARKER_END } from '../constant/index';
+
+import { type FlowProps } from '@/plugins/vue-flow/vue-flow-types';
+
+const props = defineProps<FlowProps>();
 
 // 定义节点类型
 const nodeTypes = {
@@ -54,13 +64,13 @@ const {
   },
   fitViewOnInit: true,
   minZoom: 0.5,
-  maxZoom: 1.5,
+  maxZoom: 1.0,
 });
 
 // 设置初始节点和边
 onMounted(() => {
-  // setNodes(initialNodes);
-  // setEdges(initialEdges);
+  setNodes(props.data.nodes);
+  setEdges(props.data.edges);
 
   // 使用onPaneReady确保画布已准备好
   onPaneReady(() => {
@@ -70,33 +80,37 @@ onMounted(() => {
   });
 });
 
-  // 处理连接
-  onConnect((params) => {
-    // 添加动态连接线，带箭头
-    addEdges([{
+// 处理连接
+onConnect((params) => {
+  // 添加动态连接线，带箭头
+  addEdges([
+    {
       id: `e-${params.source}-${params.target}`,
       source: params.source,
       target: params.target,
       animated: true,
       style: { stroke: '#1890ff', strokeWidth: 2 },
-      markerEnd: DEFAULT_MARKER_END
-    }]);
-  });
-  const onNodeClick = () => { };
-  const onDragEnd = () => { };
+      markerEnd: DEFAULT_MARKER_END,
+    },
+  ]);
+});
+const onNodeClick = () => {};
+const onDragEnd = () => {};
 
-  const handleConnect = (params: any) => {
-    console.log('Connection params:', params)
+const handleConnect = (params: any) => {
+  console.log('Connection params:', params);
 
-      addEdges([{
-        id: `e-${params.source}-${params.target}`,
-        source: params.source,
-        target: params.target,
-        animated: true,
-        style: { stroke: '#1890ff', strokeWidth: 2 },
-        markerEnd: DEFAULT_MARKER_END
-      }])
-  }
+  addEdges([
+    {
+      id: `e-${params.source}-${params.target}`,
+      source: params.source,
+      target: params.target,
+      animated: true,
+      style: { stroke: '#1890ff', strokeWidth: 2 },
+      markerEnd: DEFAULT_MARKER_END,
+    },
+  ]);
+};
 
 // 节点拖动相关处理
 onNodeDragStart(() => {
@@ -115,13 +129,13 @@ const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart } =
 
 // 定义节点类型数据
 const nodeCategories = [
-      { type: 'start', icon: '📦', label: '开始节点' },
-      // { type: 'default', icon: '▶', label: '默认节点' },
-      // { type: 'text', icon: '📝', label: '文本节点' },
-      // { type: 'image', icon: '🖼️', label: '图片节点' },
-      // { type: 'card', icon: '🗂️', label: '卡片节点' },
-      // { type: 'process', icon: '⚙️', label: '流程节点' },
-      { type: 'data', icon: '📊', label: 'Tiddler节点' },
+  { type: 'start', icon: '📦', label: '开始节点' },
+  // { type: 'default', icon: '▶', label: '默认节点' },
+  // { type: 'text', icon: '📝', label: '文本节点' },
+  // { type: 'image', icon: '🖼️', label: '图片节点' },
+  // { type: 'card', icon: '🗂️', label: '卡片节点' },
+  // { type: 'process', icon: '⚙️', label: '流程节点' },
+  { type: 'data', icon: '📊', label: 'Tiddler节点' },
 ];
 
 // 检测是否为小屏幕设备（宽度小于768px）
@@ -139,63 +153,102 @@ window.addEventListener('resize', () => {
 });
 
 // 定义侧边栏显示状态，小屏幕默认隐藏
-const showSidebar = ref(!isSmallScreen.value);
+const showSidebar = ref(false);
 
 // 切换侧边栏显示/隐藏
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
-
-// 定义组件可接收的属性
-defineProps<{
-  // 添加你需要的属性，并提供默认值
-  title?: string;
-  theme?: string;
-  showLogos?: boolean;
-}>();
 </script>
 
 <template>
   <div class="flow-container">
     <!-- 侧边栏 -->
-    <div class="sidebar" :class="{ 'hidden': !showSidebar }">
+    <div
+      class="sidebar"
+      :class="{ hidden: !showSidebar }">
       <div class="sidebar-header">
         <div class="sidebar-title">TiddlyWiki 流程图</div>
-        <button class="sidebar-toggle-inside" @click="toggleSidebar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
+        <button
+          class="sidebar-toggle-inside"
+          @click="toggleSidebar">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"
+              fill="currentColor" />
           </svg>
         </button>
       </div>
       <div class="node-list">
-        <div v-for="node in nodeCategories" :key="node.type" class="node-item" draggable="true"
-          @dragstart="onDragStart($event, node.type)" @dragend="onDragEnd">
+        <div
+          v-for="node in nodeCategories"
+          :key="node.type"
+          class="node-item"
+          draggable="true"
+          @dragstart="onDragStart($event, node.type)"
+          @dragend="onDragEnd">
           <span class="node-icon">{{ node.icon }}</span>
           <span class="node-label">{{ node.label }}</span>
         </div>
       </div>
     </div>
 
-    <button v-if="!showSidebar" class="sidebar-toggle" @click="toggleSidebar">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="currentColor"/>
+    <button
+      v-if="!showSidebar"
+      class="sidebar-toggle"
+      @click="toggleSidebar">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z"
+          fill="currentColor" />
       </svg>
     </button>
 
     <!-- Vue Flow 画布 -->
-    <div class="flow-wrapper" :class="{ 'drag-over': isDragOver, 'with-sidebar': showSidebar }">
-      <VueFlow id="tiddlywiki-flow" :node-types="nodeTypes" :default-zoom="0.7" :min-zoom="0.5" :max-zoom="1.5" :connect-on-drop="true"
-        :snap-to-grid="true" :snap-grid="[20, 20]" :default-edge-options="{
-            animated: true,
-            style: { stroke: '#1890ff', strokeWidth: 2 },
-            markerEnd: DEFAULT_MARKER_END
-          }" :connection-mode="ConnectionMode.Loose" @drop="onDrop" @dragover="onDragOver" @dragleave="onDragLeave"
-        @connect="handleConnect" @node-click="onNodeClick" :connection-radius="30" auto-connect fit-view-on-init
-        class="vue-flow-wrapper" style="height: 100%; width: 100%;">
+    <div
+      class="flow-wrapper"
+      :class="{ 'drag-over': isDragOver, 'with-sidebar': showSidebar }">
+      <VueFlow
+        id="tiddlywiki-flow"
+        :node-types="nodeTypes"
+        :default-zoom="0.7"
+        :min-zoom="0.5"
+        :max-zoom="1.5"
+        :connect-on-drop="true"
+        :snap-to-grid="true"
+        :snap-grid="[20, 20]"
+        :default-edge-options="{
+          animated: true,
+          style: { stroke: '#1890ff', strokeWidth: 2 },
+          markerEnd: DEFAULT_MARKER_END,
+        }"
+        :connection-mode="ConnectionMode.Loose"
+        @drop="onDrop"
+        @dragover="onDragOver"
+        @dragleave="onDragLeave"
+        @connect="handleConnect"
+        @node-click="onNodeClick"
+        :connection-radius="30"
+        auto-connect
+        fit-view-on-init
+        class="vue-flow-wrapper"
+        style="height: 100%; width: 100%">
         <!-- <Background pattern-color="#fff" :gap="8" /> -->
         <!-- <MiniMap /> -->
-        <Controls position="top-center"/>
-        <Panel position="top-right" class="custom-panel">
+        <Controls position="top-center" />
+        <Panel
+          position="top-right"
+          class="custom-panel">
           <button @click="fitView({ padding: 0.2 })">适应视图</button>
         </Panel>
       </VueFlow>
@@ -232,7 +285,6 @@ defineProps<{
   justify-content: center;
   font-size: 14px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
 }
 
 .sidebar-toggle:hover {
@@ -246,7 +298,6 @@ defineProps<{
   color: #333;
   /* height: 100%; */
   padding: 0;
-  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   z-index: 50;
@@ -297,7 +348,6 @@ defineProps<{
   background-color: transparent;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
 }
 
 .sidebar-toggle-inside:hover {
@@ -324,7 +374,7 @@ defineProps<{
   border-radius: 6px;
   background-color: white;
   cursor: grab;
-  transition: all 0.2s;
+  transition: all 0.3s all;
   display: flex;
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -437,18 +487,18 @@ defineProps<{
 }
 
 /* 箭头样式 */
-:deep(marker[id^="vue-flow__"]) {
+:deep(marker[id^='vue-flow__']) {
   fill: #1890ff; /* 蓝色，与连接线颜色匹配 */
   transition: fill 0.2s ease; /* 平滑过渡效果 */
 }
 
 /* 鼠标悬停时的箭头样式 */
-:deep(.vue-flow__edge:hover marker[id^="vue-flow__"]) {
+:deep(.vue-flow__edge:hover marker[id^='vue-flow__']) {
   fill: #2196f3; /* 悬停时颜色变亮 */
 }
 
 /* 选中的箭头样式 */
-:deep(.vue-flow__edge.selected marker[id^="vue-flow__"]) {
+:deep(.vue-flow__edge.selected marker[id^='vue-flow__']) {
   fill: #ff9800; /* 选中时为橙色 */
 }
 
@@ -482,42 +532,39 @@ defineProps<{
   z-index: 1000;
   opacity: 0.8;
 }
-  .node-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 8px 10px;
-    overflow-y: auto;
-  }
+.node-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 10px;
+  overflow-y: auto;
+}
 
-  .node-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
-    border: 1px solid #dcdfe6;
-    border-radius: 4px;
-    background-color: white;
-    cursor: move;
-    transition: all 0.3s;
-  }
+.node-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background-color: white;
+  cursor: move;
+  transition: all 0.3s;
+}
 
-  .node-item:hover {
-    background-color: #ecf5ff;
-    border-color: #409eff;
-  }
+.node-item:hover {
+  background-color: #ecf5ff;
+  border-color: #409eff;
+}
 
-  .node-icon {
-    font-size: 16px;
-  }
+.node-icon {
+  font-size: 16px;
+}
 
-  .node-label {
-    font-size: 14px;
-  }
-  :deep(.vue-flow__controls) {
-    display: flex;
-  }
+.node-label {
+  font-size: 14px;
+}
+:deep(.vue-flow__controls) {
+  display: flex;
+}
 </style>
-
-
-

@@ -7,9 +7,10 @@
   "compilerOptions": {
     "target": "ES2021",
     "moduleResolution": "node",
+    "types": ["node", "tw5-typed"],
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
-
+  },
+  "include": ["./src/**/*", "./src/**.d.ts"]
 }

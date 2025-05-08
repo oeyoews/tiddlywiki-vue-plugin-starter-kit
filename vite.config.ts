@@ -44,7 +44,7 @@ if (pluginsToProcess.length === 0) {
 
 // 创建单个插件的构建配置
 const createPluginConfig = (plugin) => {
-  console.log(`Creating build config for plugin: ${plugin}`);
+  // console.log(`Creating build config for plugin: ${plugin}`);
 
   return defineConfig({
     resolve: {

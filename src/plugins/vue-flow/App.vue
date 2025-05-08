@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import Flow from './components/Flow.vue';
 
-interface Props {
-  title?: string;
-  theme?: string;
-  showLogos?: boolean;
-}
-const props = defineProps<Props>();
+import { FlowProps } from '@/plugins/vue-flow/vue-flow-types';
+withDefaults(defineProps<FlowProps>(), {
+  data: () => ({
+    nodes: [],
+    edges: [],
+  }),
+});
 </script>
 
 <template>
   <div class="vue-flow-plugin">
-    <Flow
-      :title="title"
-      :theme="theme"
-      :showLogos="showLogos" />
+    <Flow :data="data" />
   </div>
 </template>
 
