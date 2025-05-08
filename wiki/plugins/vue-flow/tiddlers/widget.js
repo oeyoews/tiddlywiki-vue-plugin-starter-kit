@@ -33,7 +33,10 @@ class PluginVueFlowWidget extends Widget {
     const tiddlers = $tw.wiki.filterTiddlers(filter);
 
     const getNodes = (tiddlers) => {
-      return tiddlers.map((tiddler, index) => {
+      const existTiddlers = tiddlers.filter((tiddler) =>
+        $tw.wiki.tiddlerExists(tiddler)
+      );
+      return existTiddlers.map((tiddler, index) => {
         const {
           creator = '',
           title = '',
