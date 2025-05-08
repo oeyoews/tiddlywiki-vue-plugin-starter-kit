@@ -264,11 +264,11 @@ const { applyHorizontalLayout, applyVerticalLayout } = useAutoLayout({
               class="auto-layout-btn">
               水平排序
             </button>
-            <button
+            <!-- <button
               @click="applyVerticalLayout"
               class="auto-layout-btn vertical-btn">
               垂直排序
-            </button>
+            </button> -->
           </div>
         </Panel>
       </VueFlow>

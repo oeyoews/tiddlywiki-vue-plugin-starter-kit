@@ -72,17 +72,23 @@ const handleNodeClick = () => new $tw.Story().navigateTiddler(title);
 <style scoped>
 .data-node {
   padding: 0;
-  border-radius: 6px;
-  background-color: white;
-  border: 1px solid #9c27b0;
+  border-radius: 5px;
+  /* background-color: white;
+  border: 1px solid #9c27b0; */
+  background-color: #e1f5fe;
+  border: 1px solid #81d4fa;
   width: 300px;
   position: relative;
 }
 
 .data-header {
-  background-color: #9c27b0;
-  color: white;
+  /* background-color: #9c27b0; */
   padding: 8px 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
+  border-bottom: 1px solid #81d4fa;
+  padding-bottom: 5px;
 }
 
 .data-type {
@@ -160,9 +166,11 @@ const handleNodeClick = () => new $tw.Story().navigateTiddler(title);
 
 .tag {
   font-size: 11px;
-  background-color: #e3f2fd;
+  /* background-color: #e3f2fd; */
+  background-color: #fff;
   color: #1976d2;
   padding: 2px 6px;
   border-radius: 4px;
+  line-height: 16px;
 }
 </style>
