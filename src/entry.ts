@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import App from './plugins/vue-danmu/App.vue';
+import App from './plugins/vue-flow/App.vue';
 
 const app = createApp(App);
 

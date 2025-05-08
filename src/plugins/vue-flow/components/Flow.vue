@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { markRaw, onMounted } from 'vue';
-import { useVueFlow, VueFlow, Panel, MarkerType } from '@vue-flow/core';
+import {    ConnectionMode, useVueFlow, VueFlow, Panel, MarkerType } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 // @ts-ignore
@@ -126,22 +126,12 @@ const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart, isDragging } =
 
 // 定义节点类型数据
 const nodeCategories = [
-  {
-    title: '基础节点',
-    nodes: [
       { type: 'default', icon: '📦', label: '默认节点' },
       { type: 'text', icon: '📝', label: '文本节点' },
       { type: 'image', icon: '🖼️', label: '图片节点' },
-    ],
-  },
-  {
-    title: '高级节点',
-    nodes: [
       { type: 'card', icon: '🗂️', label: '卡片节点' },
       { type: 'process', icon: '⚙️', label: '流程节点' },
       { type: 'data', icon: '📊', label: '数据节点' },
-    ],
-  },
 ];
 
 // 定义组件可接收的属性
@@ -155,67 +145,40 @@ defineProps<{
 
 <template>
   <div class="flow-container">
-    <!-- 侧边栏 - 可拖拽节点 -->
     <div class="sidebar">
-      <div class="sidebar-title">节点类型</div>
-
-      <!-- 使用v-for渲染节点类别和节点 -->
-      <div
-        v-for="(category, categoryIndex) in nodeCategories"
-        :key="categoryIndex"
-        class="sidebar-section">
-        <div class="section-title">{{ category.title }}</div>
-
-        <div
-          v-for="(node, nodeIndex) in category.nodes"
-          :key="`${categoryIndex}-${nodeIndex}`"
-          class="dnd-node"
-          draggable
-          @dragstart="onDragStart($event, node.type)">
-          <div class="node-icon">{{ node.icon }}</div>
-          <div class="node-label">{{ node.label }}</div>
+      <div class="node-list">
+        <div v-for="node in nodeCategories" :key="node.type" class="node-item" draggable="true"
+          @dragstart="onDragStart($event, node.type)" @dragend="onDragEnd">
+          <span>{{ node.icon }}</span>
+          <span>{{ node.label }}</span>
         </div>
       </div>
     </div>
-
     <!-- Vue Flow 画布 -->
     <div
       class="flow-wrapper"
-      @dragover="onDragOver"
-      @drop="onDrop"
-      @dragleave="onDragLeave"
       :class="{ 'drag-over': isDragOver }">
       <VueFlow
         :node-types="nodeTypes"
         :default-zoom="1"
         :min-zoom="0.5"
         :max-zoom="1.5"
+        :connect-on-drop="true" :snap-to-grid="true" :snap-grid="[20, 20]"
         :default-edge-options="{
-          animated: true,
-          style: { stroke: '#1976d2', strokeWidth: 1 },
-          markerEnd: 'arrow',
-        }"
+            animated: true,
+            style: { stroke: '#1890ff', strokeWidth: 1.5 },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: '#1890ff',
+              width: 16,
+              height: 16,
+              strokeWidth: 0.1
+            }
+          }"
+          :connection-mode="ConnectionMode.Loose" @drop="onDrop" @dragover="onDragOver" @dragleave="onDragLeave"
+          @connect="handleConnect" @node-click="onNodeClick" @connection-start="onConnectionStart"
+          @connection-end="onConnectionEnd" :connection-radius="30" auto-connect fit-view-on-init
         class="vue-flow-wrapper">
-        <!-- 添加SVG定义，包含箭头标记 -->
-        <template #connection-marker>
-          <svg>
-            <defs>
-              <marker
-                id="vue-flow__arrowhead"
-                viewBox="0 0 10 10"
-                refX="8"
-                refY="5"
-                markerWidth="8"
-                markerHeight="8"
-                orient="auto-start-reverse">
-                <path
-                  d="M 0 0 L 10 5 L 0 10 z"
-                  fill="#1976d2" />
-              </marker>
-            </defs>
-          </svg>
-        </template>
-
         <Background
           pattern-color="#fff"
           :gap="8" />
@@ -436,4 +399,28 @@ defineProps<{
   z-index: 1000;
   opacity: 0.8;
 }
+  .node-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .node-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    background-color: white;
+    cursor: move;
+    transition: all 0.3s;
+  }
+
+  .node-item:hover {
+    background-color: #ecf5ff;
+    border-color: #409eff;
+  }
+
 </style>
