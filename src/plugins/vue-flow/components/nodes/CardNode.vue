@@ -19,7 +19,7 @@ function toggleExpand() {
     <!-- 输入连接点 -->
     <Handle
       type="target"
-      :position="Position.Top"
+      :position="Position.Left"
       :node-id="props.id" />
 
     <!-- 节点内容 -->
@@ -54,7 +54,7 @@ function toggleExpand() {
     <!-- 输出连接点 -->
     <Handle
       type="source"
-      :position="Position.Bottom"
+      :position="Position.Right"
       :node-id="props.id" />
   </div>
 </template>

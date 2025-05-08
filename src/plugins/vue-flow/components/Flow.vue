@@ -17,7 +17,8 @@ import ImageNode from './nodes/ImageNode.vue';
 import CardNode from './nodes/CardNode.vue';
 import ProcessNode from './nodes/ProcessNode.vue';
 import DataNode from './nodes/DataNode.vue';
-import useDragAndDrop from '../hooks/useDnd';
+import StartNode from './nodes/StartNode.vue';
+import useDragAndDrop from '../hooks/useDnD';
 
 // 定义节点类型
 const nodeTypes = {
@@ -27,6 +28,7 @@ const nodeTypes = {
   card: markRaw(CardNode),
   process: markRaw(ProcessNode),
   data: markRaw(DataNode),
+  start: markRaw(StartNode),
 };
 
 // 初始化Vue Flow
@@ -58,32 +60,115 @@ const initialNodes = [
   {
     id: '0',
     type: 'image',
-    position: { x: 150, y: 250 },
-    data: { label: '节点 2' },
-    label: 'Marker Arrow',
-    // Use MarkerType enum to set the marker
-    markerEnd: MarkerType.Arrow,
-    markerStart: MarkerType.Arrow,
+    position: { x: 300, y: 100 },
+    data: {
+      label: 'TiddlyWiki节点',
+      imageUrl: '/src/plugins/vue-flow/assets/tiddlywiki-icon.svg'
+    },
   },
   {
     id: '1',
-    type: 'default',
-    label: '节点 1',
-    position: { x: 50, y: 50 },
-    data: { label: '节点 1' },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: '#ff0072',
+    type: 'start',
+    position: { x: 50, y: 100 },
+    data: { label: '开始节点' },
+  },
+  {
+    id: '2',
+    type: 'process',
+    position: { x: 300, y: 250 },
+    data: {
+      label: '处理节点',
+      description: '处理流程步骤',
+      status: 'processing',
     },
-    markerStart: {
-      type: MarkerType.ArrowClosed,
-      color: '#ff0072',
+  },
+  {
+    id: '3',
+    type: 'text',
+    position: { x: 550, y: 100 },
+    data: {
+      label: '文本节点',
+      text: '这是一个文本节点示例'
+    },
+  },
+  {
+    id: '4',
+    type: 'data',
+    position: { x: 550, y: 250 },
+    data: {
+      label: '数据节点',
+      dataType: 'JSON',
+      fields: [
+        { key: 'id', value: '001' },
+        { key: 'name', value: '示例数据' },
+      ],
     },
   },
 ];
 
 // 初始边数据
-const initialEdges = [];
+const initialEdges = [
+  // 从开始节点到图片节点
+  {
+    id: 'e-1-0',
+    source: '1',
+    target: '0',
+    animated: true,
+    style: { stroke: '#1890ff', strokeWidth: 2 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: '#1890ff',
+      width: 16,
+      height: 16,
+      strokeWidth: 1
+    }
+  },
+  // 从开始节点到处理节点
+  {
+    id: 'e-1-2',
+    source: '1',
+    target: '2',
+    animated: true,
+    style: { stroke: '#1890ff', strokeWidth: 2 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: '#1890ff',
+      width: 16,
+      height: 16,
+      strokeWidth: 1
+    }
+  },
+  // 从图片节点到文本节点
+  {
+    id: 'e-0-3',
+    source: '0',
+    target: '3',
+    animated: true,
+    style: { stroke: '#1890ff', strokeWidth: 2 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: '#1890ff',
+      width: 16,
+      height: 16,
+      strokeWidth: 1
+    }
+  },
+  // 从处理节点到数据节点
+  {
+    id: 'e-2-4',
+    source: '2',
+    target: '4',
+    animated: true,
+    style: { stroke: '#1890ff', strokeWidth: 2 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: '#1890ff',
+      width: 16,
+      height: 16,
+      strokeWidth: 1
+    }
+  }
+];
 
 // 设置初始节点和边
 onMounted(() => {
@@ -98,16 +183,43 @@ onMounted(() => {
   });
 });
 
-// 处理连接
-onConnect((params) => {
-  // 添加动态连接线，带箭头
-  addEdges({
-    ...params,
-    animated: true,
-    markerEnd: 'arrowclosed', // 添加箭头
-    style: { stroke: '#1976d2', strokeWidth: 1 }, // 增加线宽使箭头更明显
+  // 处理连接
+  onConnect((params) => {
+    // 添加动态连接线，带箭头
+    addEdges({
+      ...params,
+      animated: true,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: '#1890ff',
+        width: 16,
+        height: 16,
+        strokeWidth: 1
+      },
+      style: { stroke: '#1976d2', strokeWidth: 1 }, // 增加线宽使箭头更明显
+    });
   });
-});
+  const onNodeClick = () => { };
+  const onDragEnd = () => { };
+
+  const handleConnect = (params: any) => {
+    console.log('Connection params:', params)
+
+      addEdges([{
+        id: `e-${params.source}-${params.target}`,
+        source: params.source,
+        target: params.target,
+        animated: true,
+        style: { stroke: '#1890ff', strokeWidth: 2 },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: '#1890ff',
+          width: 16,
+          height: 16,
+          strokeWidth: 1
+        }
+      }])
+  }
 
 // 节点拖动相关处理
 onNodeDragStart(() => {
@@ -121,11 +233,12 @@ onNodeDragStop(() => {
 });
 
 // 使用useDragAndDrop钩子获取所有拖拽相关函数
-const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart, isDragging } =
+const { onDragOver, onDrop, onDragLeave, isDragOver, onDragStart } =
   useDragAndDrop();
 
 // 定义节点类型数据
 const nodeCategories = [
+      { type: 'start', icon: '▶', label: '开始节点' },
       { type: 'default', icon: '📦', label: '默认节点' },
       { type: 'text', icon: '📝', label: '文本节点' },
       { type: 'image', icon: '🖼️', label: '图片节点' },
@@ -155,16 +268,9 @@ defineProps<{
       </div>
     </div>
     <!-- Vue Flow 画布 -->
-    <div
-      class="flow-wrapper"
-      :class="{ 'drag-over': isDragOver }">
-      <VueFlow
-        :node-types="nodeTypes"
-        :default-zoom="1"
-        :min-zoom="0.5"
-        :max-zoom="1.5"
-        :connect-on-drop="true" :snap-to-grid="true" :snap-grid="[20, 20]"
-        :default-edge-options="{
+    <div class="flow-wrapper" :class="{ 'drag-over': isDragOver }">
+      <VueFlow :node-types="nodeTypes" :default-zoom="0.7" :min-zoom="0.5" :max-zoom="1.5" :connect-on-drop="true"
+        :snap-to-grid="true" :snap-grid="[20, 20]" :default-edge-options="{
             animated: true,
             style: { stroke: '#1890ff', strokeWidth: 1.5 },
             markerEnd: {
@@ -174,19 +280,13 @@ defineProps<{
               height: 16,
               strokeWidth: 0.1
             }
-          }"
-          :connection-mode="ConnectionMode.Loose" @drop="onDrop" @dragover="onDragOver" @dragleave="onDragLeave"
-          @connect="handleConnect" @node-click="onNodeClick" @connection-start="onConnectionStart"
-          @connection-end="onConnectionEnd" :connection-radius="30" auto-connect fit-view-on-init
+          }" :connection-mode="ConnectionMode.Loose" @drop="onDrop" @dragover="onDragOver" @dragleave="onDragLeave"
+        @connect="handleConnect" @node-click="onNodeClick" :connection-radius="30" auto-connect fit-view-on-init
         class="vue-flow-wrapper">
-        <Background
-          pattern-color="#fff"
-          :gap="8" />
+        <Background pattern-color="#fff" :gap="8" />
         <MiniMap />
         <Controls />
-        <Panel
-          position="top-right"
-          class="custom-panel">
+        <Panel position="top-right" class="custom-panel">
           <button @click="fitView({ padding: 0.2 })">适应视图</button>
         </Panel>
       </VueFlow>
@@ -281,8 +381,8 @@ defineProps<{
 }
 
 .flow-wrapper.drag-over {
-  background-color: rgba(25, 118, 210, 0.05);
-  box-shadow: inset 0 0 20px rgba(25, 118, 210, 0.2);
+  background-color: transparent;
+  /* 移除阴影效果 */
 }
 
 .custom-panel button {
@@ -340,12 +440,11 @@ defineProps<{
 
 /* 连接点样式 */
 :deep(.vue-flow__handle) {
-  width: 6px;
-  height: 6px;
-  background-color: #1976d2; /* 蓝色，与连接线颜色匹配 */
+  width: 8px;
+  height: 8px;
+  background-color: #2196f3; /* 悬停时颜色变亮 */
   border-radius: 50%; /* 圆形连接点 */
-  border: 2px solid white; /* 白色边框 */
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* 轻微阴影效果 */
+  box-shadow: none; /* 移除阴影效果 */
   transition: transform 0.2s ease, background-color 0.2s ease; /* 平滑过渡效果 */
 }
 
@@ -388,7 +487,7 @@ defineProps<{
 
 /* 拖拽时的节点样式 */
 :deep(.vue-flow__node.dragging) {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: none; /* 移除阴影效果 */
   z-index: 10;
 }
 

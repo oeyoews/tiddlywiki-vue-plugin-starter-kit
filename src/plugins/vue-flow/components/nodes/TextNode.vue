@@ -29,20 +29,20 @@ function finishEditing() {
 <template>
   <div class="text-node">
     <!-- 输入连接点 -->
-    <Handle 
-      type="target" 
-      :position="Position.Top" 
-      :node-id="props.id" 
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :node-id="props.id"
     />
-    
+
     <!-- 节点内容 -->
     <div class="node-content">
       <div class="node-title">{{ props.data?.label || '文本节点' }}</div>
-      
+
       <div v-if="isEditing" class="text-editor">
-        <textarea 
-          v-model="text" 
-          @blur="finishEditing" 
+        <textarea
+          v-model="text"
+          @blur="finishEditing"
           @keydown.enter="finishEditing"
           ref="textareaRef"
           rows="3"
@@ -52,12 +52,12 @@ function finishEditing() {
         {{ text }}
       </div>
     </div>
-    
+
     <!-- 输出连接点 -->
-    <Handle 
-      type="source" 
-      :position="Position.Bottom" 
-      :node-id="props.id" 
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :node-id="props.id"
     />
   </div>
 </template>

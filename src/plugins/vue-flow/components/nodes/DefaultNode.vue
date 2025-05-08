@@ -8,22 +8,22 @@ const props = defineProps<NodeProps>()
 <template>
   <div class="default-node">
     <!-- 输入连接点 -->
-    <Handle 
-      type="target" 
-      :position="Position.Top" 
-      :node-id="props.id" 
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :node-id="props.id"
     />
-    
+
     <!-- 节点内容 -->
     <div class="node-content">
       {{ props.data?.label || '默认节点' }}
     </div>
-    
+
     <!-- 输出连接点 -->
-    <Handle 
-      type="source" 
-      :position="Position.Bottom" 
-      :node-id="props.id" 
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :node-id="props.id"
     />
   </div>
 </template>

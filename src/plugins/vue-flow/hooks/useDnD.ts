@@ -156,7 +156,7 @@ export default function useDragAndDrop() {
         // 为不同类型的节点添加默认数据
         ...(nodeType === 'text' ? { text: '双击编辑文本...' } : {}),
         ...(nodeType === 'image'
-          ? { imageUrl: 'https://via.placeholder.com/150' }
+          ? { imageUrl: '/src/plugins/vue-flow/assets/tiddlywiki-icon.svg' }
           : {}),
         ...(nodeType === 'card'
           ? {

@@ -12,7 +12,7 @@ const editValue = ref('')
 // 开始编辑
 function startEdit(key: string) {
   if (!props.data || !props.data.fields) return
-  
+
   const field = props.data.fields.find(f => f.key === key)
   if (field) {
     editValue.value = field.value
@@ -23,12 +23,12 @@ function startEdit(key: string) {
 // 保存编辑
 function saveEdit(key: string) {
   if (!props.data || !props.data.fields) return
-  
+
   const fieldIndex = props.data.fields.findIndex(f => f.key === key)
   if (fieldIndex !== -1) {
     props.data.fields[fieldIndex].value = editValue.value
   }
-  
+
   isEditing.value = false
 }
 </script>
@@ -36,41 +36,41 @@ function saveEdit(key: string) {
 <template>
   <div class="data-node">
     <!-- 输入连接点 -->
-    <Handle 
-      type="target" 
-      :position="Position.Top" 
-      :node-id="props.id" 
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :node-id="props.id"
     />
-    
+
     <!-- 节点内容 -->
     <div class="data-header">
       <div class="data-type">{{ props.data?.dataType || '数据' }}</div>
       <div class="data-name">{{ props.data?.label || '数据节点' }}</div>
     </div>
-    
+
     <div class="data-fields">
       <div v-if="!props.data?.fields || props.data.fields.length === 0" class="no-fields">
         无数据字段
       </div>
-      <div 
+      <div
         v-else
-        v-for="field in props.data.fields" 
+        v-for="field in props.data.fields"
         :key="field.key"
         class="field-row"
       >
         <div class="field-key">{{ field.key }}:</div>
-        <div 
-          v-if="isEditing && editValue === field.value" 
+        <div
+          v-if="isEditing && editValue === field.value"
           class="field-value-edit"
         >
-          <input 
-            v-model="editValue" 
+          <input
+            v-model="editValue"
             @blur="saveEdit(field.key)"
             @keyup.enter="saveEdit(field.key)"
             ref="inputRef"
           />
         </div>
-        <div 
+        <div
           v-else
           class="field-value"
           @dblclick="startEdit(field.key)"
@@ -79,12 +79,12 @@ function saveEdit(key: string) {
         </div>
       </div>
     </div>
-    
+
     <!-- 输出连接点 -->
-    <Handle 
-      type="source" 
-      :position="Position.Bottom" 
-      :node-id="props.id" 
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :node-id="props.id"
     />
   </div>
 </template>
@@ -96,7 +96,6 @@ function saveEdit(key: string) {
   background-color: white;
   border: 1px solid #9c27b0;
   width: 200px;
-  overflow: hidden;
   position: relative;
 }
 
