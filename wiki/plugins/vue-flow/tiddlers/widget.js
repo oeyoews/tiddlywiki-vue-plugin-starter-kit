@@ -26,7 +26,7 @@ class PluginVueFlowWidget extends Widget {
       window.Vue = require(vuelib);
       window.vue = require(vuelib);
     }
-    const { filter = '[!is[system]]' } = this.attributes;
+    const { filter = '[!is[system]!sort[modified]limit[4]]' } = this.attributes;
 
     const tiddlers = $tw.wiki.filterTiddlers(filter);
 
