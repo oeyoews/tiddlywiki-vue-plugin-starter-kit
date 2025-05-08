@@ -32,6 +32,4 @@ pnpm start ## preview tiddlywiki plugin
 <!-- vue-flow -->
 * 自动存储edges, 支持拖拽
 * 支持上下布局， 自动改变handle
-* 直接过滤字段(widget.js)
-* 样式异常处理
 

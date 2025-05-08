@@ -2,14 +2,14 @@
 import { Position, NodeProps, Handle } from '@vue-flow/core';
 // import { ref } from 'vue';
 
-const supportedFields = ['title', 'creator', 'description', 'url'];
+// const supportedFields = ['title', 'creator', 'description', 'url'];
 
 // 获取节点属性
 const props = defineProps<NodeProps>();
 
 const filterFields = (fields: any) =>
   Object.keys(fields)
-    .filter((key) => supportedFields.includes(key))
+    .filter((key) => key !== 'tags')
     .map((key) => ({ key, value: fields[key] }));
 
 const fields = filterFields(props.data.fields);
@@ -45,7 +45,7 @@ const handleNodeClick = () => new $tw.Story().navigateTiddler(title);
         <!-- tags -->
         <div class="field-key">{{ field.key }}:</div>
         <div class="field-value">
-          {{ field.value }}
+          {{ field.value || '无' }}
         </div>
       </div>
 

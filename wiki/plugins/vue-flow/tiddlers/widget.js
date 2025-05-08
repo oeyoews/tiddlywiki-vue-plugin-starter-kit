@@ -32,7 +32,8 @@ class PluginVueFlowWidget extends Widget {
 
     const getNodes = (tiddlers) => {
       return tiddlers.map((tiddler, index) => {
-        const { text, ...fields } = $tw.wiki.getTiddler(tiddler)?.fields;
+        const { creator, title, tags, ...otherFields } =
+          $tw.wiki.getTiddler(tiddler)?.fields;
         const data = {
           id: `tiddler_${index}`,
           type: 'data',
@@ -40,16 +41,57 @@ class PluginVueFlowWidget extends Widget {
           data: {
             label: tiddler,
             dataType: 'Tiddler',
-            fields,
+            fields: {
+              creator,
+              title,
+              tags,
+            },
           },
         };
         return data;
       });
     };
+    const getEdges = (tiddlers) => {
+      // 创建边数组
+      const edges = [];
+
+      // 如果节点数量小于2，则无需创建边
+      if (tiddlers.length < 2) return edges;
+
+      // 获取默认边样式
+      const defaultEdgeStyle = {
+        animated: true,
+        style: { stroke: '#1890ff', strokeWidth: 2 },
+        markerEnd: {
+          type: 'arrowclosed',
+          color: '#1890ff',
+          width: 16,
+          height: 16,
+          strokeWidth: 0.1,
+        },
+      };
+
+      // 创建连接线 - 每个节点连接到下一个节点
+      for (let i = 0; i < tiddlers.length - 1; i++) {
+        const sourceId = `tiddler_${i}`;
+        const targetId = `tiddler_${i + 1}`;
+
+        // 创建边
+        edges.push({
+          id: `edge-${sourceId}-${targetId}`,
+          source: sourceId,
+          target: targetId,
+          type: 'smoothstep',
+          ...defaultEdgeStyle,
+        });
+      }
+
+      return edges;
+    };
 
     const data = {
       nodes: getNodes(tiddlers),
-      edges: [],
+      edges: getEdges(tiddlers),
     };
 
     const { createApp } = window.Vue;
