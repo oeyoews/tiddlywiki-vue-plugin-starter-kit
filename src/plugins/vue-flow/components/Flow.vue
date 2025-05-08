@@ -19,6 +19,7 @@ import ProcessNode from './nodes/ProcessNode.vue';
 import DataNode from './nodes/DataNode.vue';
 import StartNode from './nodes/StartNode.vue';
 import useDragAndDrop from '../hooks/useDnD';
+import { initialEdges, initialNodes } from '../constant';
 
 // 定义节点类型
 const nodeTypes = {
@@ -55,121 +56,6 @@ const {
   maxZoom: 1.5,
 });
 
-// 初始节点数据
-const initialNodes = [
-  {
-    id: '0',
-    type: 'image',
-    position: { x: 300, y: 100 },
-    data: {
-      label: 'TiddlyWiki节点',
-      imageUrl: '/src/plugins/vue-flow/assets/tiddlywiki-icon.svg'
-    },
-  },
-  {
-    id: '1',
-    type: 'start',
-    position: { x: 50, y: 100 },
-    data: { label: '开始节点' },
-  },
-  {
-    id: '2',
-    type: 'process',
-    position: { x: 300, y: 250 },
-    data: {
-      label: '处理节点',
-      description: '处理流程步骤',
-      status: 'processing',
-    },
-  },
-  {
-    id: '3',
-    type: 'text',
-    position: { x: 550, y: 100 },
-    data: {
-      label: '文本节点',
-      text: '这是一个文本节点示例'
-    },
-  },
-  {
-    id: '4',
-    type: 'data',
-    position: { x: 550, y: 250 },
-    data: {
-      label: '数据节点',
-      dataType: 'JSON',
-      fields: [
-        { key: 'id', value: '001' },
-        { key: 'name', value: '示例数据' },
-      ],
-    },
-  },
-];
-
-// 初始边数据
-const initialEdges = [
-  // 从开始节点到图片节点
-  {
-    id: 'e-1-0',
-    source: '1',
-    target: '0',
-    animated: true,
-    style: { stroke: '#1890ff', strokeWidth: 2 },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: '#1890ff',
-      width: 16,
-      height: 16,
-      strokeWidth: 1
-    }
-  },
-  // 从开始节点到处理节点
-  {
-    id: 'e-1-2',
-    source: '1',
-    target: '2',
-    animated: true,
-    style: { stroke: '#1890ff', strokeWidth: 2 },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: '#1890ff',
-      width: 16,
-      height: 16,
-      strokeWidth: 1
-    }
-  },
-  // 从图片节点到文本节点
-  {
-    id: 'e-0-3',
-    source: '0',
-    target: '3',
-    animated: true,
-    style: { stroke: '#1890ff', strokeWidth: 2 },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: '#1890ff',
-      width: 16,
-      height: 16,
-      strokeWidth: 1
-    }
-  },
-  // 从处理节点到数据节点
-  {
-    id: 'e-2-4',
-    source: '2',
-    target: '4',
-    animated: true,
-    style: { stroke: '#1890ff', strokeWidth: 2 },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: '#1890ff',
-      width: 16,
-      height: 16,
-      strokeWidth: 1
-    }
-  }
-];
-
 // 设置初始节点和边
 onMounted(() => {
   setNodes(initialNodes);
@@ -186,18 +72,20 @@ onMounted(() => {
   // 处理连接
   onConnect((params) => {
     // 添加动态连接线，带箭头
-    addEdges({
-      ...params,
+    addEdges([{
+      id: `e-${params.source}-${params.target}`,
+      source: params.source,
+      target: params.target,
       animated: true,
+      style: { stroke: '#1890ff', strokeWidth: 2 },
       markerEnd: {
         type: MarkerType.ArrowClosed,
         color: '#1890ff',
         width: 16,
         height: 16,
-        strokeWidth: 1
-      },
-      style: { stroke: '#1976d2', strokeWidth: 1 }, // 增加线宽使箭头更明显
-    });
+        strokeWidth: 0.1
+      }
+    }]);
   });
   const onNodeClick = () => { };
   const onDragEnd = () => { };
@@ -216,7 +104,7 @@ onMounted(() => {
           color: '#1890ff',
           width: 16,
           height: 16,
-          strokeWidth: 1
+          strokeWidth: 0.1
         }
       }])
   }
@@ -272,7 +160,7 @@ defineProps<{
       <VueFlow :node-types="nodeTypes" :default-zoom="0.7" :min-zoom="0.5" :max-zoom="1.5" :connect-on-drop="true"
         :snap-to-grid="true" :snap-grid="[20, 20]" :default-edge-options="{
             animated: true,
-            style: { stroke: '#1890ff', strokeWidth: 1.5 },
+            style: { stroke: '#1890ff', strokeWidth: 2 },
             markerEnd: {
               type: MarkerType.ArrowClosed,
               color: '#1890ff',
@@ -408,10 +296,9 @@ defineProps<{
 
 /* 连接线基本样式 */
 :deep(.vue-flow__edge-path) {
-  stroke: #1976d2; /* 蓝色 */
-  stroke-width: 1;
+  stroke: #1890ff; /* 蓝色 */
+  stroke-width: 2;
   transition: stroke 0.2s ease, stroke-width 0.2s ease; /* 平滑过渡效果 */
-  marker-end: url(#vue-flow__arrowhead); /* 添加箭头 */
 }
 
 /* 动画连接线样式 */
@@ -455,18 +342,18 @@ defineProps<{
 }
 
 /* 箭头样式 */
-:deep(marker#vue-flow__arrowhead) {
-  fill: #1976d2; /* 蓝色，与连接线颜色匹配 */
+:deep(marker[id^="vue-flow__"]) {
+  fill: #1890ff; /* 蓝色，与连接线颜色匹配 */
   transition: fill 0.2s ease; /* 平滑过渡效果 */
 }
 
 /* 鼠标悬停时的箭头样式 */
-:deep(.vue-flow__edge:hover marker#vue-flow__arrowhead) {
+:deep(.vue-flow__edge:hover marker[id^="vue-flow__"]) {
   fill: #2196f3; /* 悬停时颜色变亮 */
 }
 
 /* 选中的箭头样式 */
-:deep(.vue-flow__edge.selected marker#vue-flow__arrowhead) {
+:deep(.vue-flow__edge.selected marker[id^="vue-flow__"]) {
   fill: #ff9800; /* 选中时为橙色 */
 }
 

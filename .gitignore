@@ -24,4 +24,4 @@ dist-ssr
 *.sln
 *.sw?
 
-tiddlywiki/tiddlers/*.tid
+# tiddlywiki/tiddlers/*.tid
