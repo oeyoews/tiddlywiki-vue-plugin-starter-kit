@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { markRaw, onMounted } from 'vue';
-import { ConnectionMode, useVueFlow, VueFlow, Panel, } from '@vue-flow/core';
+import { markRaw, onMounted, ref } from 'vue';
+import { ConnectionMode, useVueFlow, VueFlow, Panel, Position, } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 // @ts-ignore
@@ -46,6 +46,7 @@ const {
   onNodeDragStop,
   onPaneReady,
 } = useVueFlow({
+  id: 'tiddlywiki-flow', // 添加唯一ID
   defaultEdgeOptions: {
     animated: true,
     style: { stroke: '#1976d2', strokeWidth: 1 },
@@ -123,6 +124,28 @@ const nodeCategories = [
       { type: 'data', icon: '📊', label: '数据节点' },
 ];
 
+// 检测是否为小屏幕设备（宽度小于768px）
+const isSmallScreen = ref(window.innerWidth < 768);
+
+// 监听窗口大小变化
+window.addEventListener('resize', () => {
+  const wasSmallScreen = isSmallScreen.value;
+  isSmallScreen.value = window.innerWidth < 768;
+
+  // 如果从大屏幕变为小屏幕，自动隐藏侧边栏
+  if (!wasSmallScreen && isSmallScreen.value) {
+    showSidebar.value = false;
+  }
+});
+
+// 定义侧边栏显示状态，小屏幕默认隐藏
+const showSidebar = ref(!isSmallScreen.value);
+
+// 切换侧边栏显示/隐藏
+const toggleSidebar = () => {
+  showSidebar.value = !showSidebar.value;
+};
+
 // 定义组件可接收的属性
 defineProps<{
   // 添加你需要的属性，并提供默认值
@@ -134,28 +157,44 @@ defineProps<{
 
 <template>
   <div class="flow-container">
-    <div class="sidebar">
+    <!-- 侧边栏 -->
+    <div class="sidebar" :class="{ 'hidden': !showSidebar }">
+      <div class="sidebar-header">
+        <div class="sidebar-title">TiddlyWiki 流程图</div>
+        <button class="sidebar-toggle-inside" @click="toggleSidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
       <div class="node-list">
         <div v-for="node in nodeCategories" :key="node.type" class="node-item" draggable="true"
           @dragstart="onDragStart($event, node.type)" @dragend="onDragEnd">
-          <span>{{ node.icon }}</span>
-          <span>{{ node.label }}</span>
+          <span class="node-icon">{{ node.icon }}</span>
+          <span class="node-label">{{ node.label }}</span>
         </div>
       </div>
     </div>
+
+    <button v-if="!showSidebar" class="sidebar-toggle" @click="toggleSidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="currentColor"/>
+      </svg>
+    </button>
+
     <!-- Vue Flow 画布 -->
-    <div class="flow-wrapper" :class="{ 'drag-over': isDragOver }">
-      <VueFlow :node-types="nodeTypes" :default-zoom="0.7" :min-zoom="0.5" :max-zoom="1.5" :connect-on-drop="true"
+    <div class="flow-wrapper" :class="{ 'drag-over': isDragOver, 'with-sidebar': showSidebar }">
+      <VueFlow id="tiddlywiki-flow" :node-types="nodeTypes" :default-zoom="0.7" :min-zoom="0.5" :max-zoom="1.5" :connect-on-drop="true"
         :snap-to-grid="true" :snap-grid="[20, 20]" :default-edge-options="{
             animated: true,
             style: { stroke: '#1890ff', strokeWidth: 2 },
             markerEnd: DEFAULT_MARKER_END
           }" :connection-mode="ConnectionMode.Loose" @drop="onDrop" @dragover="onDragOver" @dragleave="onDragLeave"
         @connect="handleConnect" @node-click="onNodeClick" :connection-radius="30" auto-connect fit-view-on-init
-        class="vue-flow-wrapper">
-        <Background pattern-color="#fff" :gap="8" />
-        <MiniMap />
-        <Controls />
+        class="vue-flow-wrapper" style="height: 100%; width: 100%;">
+        <!-- <Background pattern-color="#fff" :gap="8" /> -->
+        <!-- <MiniMap /> -->
+        <Controls position="top-center"/>
         <Panel position="top-right" class="custom-panel">
           <button @click="fitView({ padding: 0.2 })">适应视图</button>
         </Panel>
@@ -166,37 +205,104 @@ defineProps<{
 
 <style scoped>
 .flow-container {
-  display: flex;
   width: 100%;
-  height: 780px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  height: 98vh; /* 明确设置高度为视口高度 */
+  border: none;
+  border-radius: 0;
+  overflow: auto;
+  position: relative;
+  background-color: #ffffff;
   overflow: hidden;
 }
 
+.sidebar-toggle {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
 .sidebar {
-  width: 180px;
+  width: 260px;
   background-color: #f8f8f8;
-  padding: 15px;
-  border-right: 1px solid #ddd;
-  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.05);
+  color: #333;
+  /* height: 100%; */
+  padding: 0;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+}
+
+/* 小屏幕设备上的侧边栏样式 */
+@media (max-width: 767px) {
+  .sidebar {
+    width: 240px;
+  }
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+  width: 0;
+  opacity: 0;
+}
+
+.sidebar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .sidebar-title {
-  font-weight: bold;
-  margin-bottom: 15px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #1976d2;
-  color: #1976d2;
+  font-weight: 600;
   font-size: 16px;
+  color: #1976d2;
   display: flex;
   align-items: center;
 }
 
-.sidebar-title::before {
-  content: '🔄';
-  margin-right: 8px;
-  font-size: 18px;
+.sidebar-toggle-inside {
+  width: 24px;
+  height: 24px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  background-color: transparent;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.sidebar-toggle-inside:hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
 }
 
 .sidebar-section {
@@ -231,23 +337,30 @@ defineProps<{
   border-color: #1976d2;
 }
 
-.node-icon {
-  font-size: 18px;
-  margin-right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.node-label {
-  font-size: 14px;
-}
+/* 节点图标和标签样式已移至底部 */
 
 .flow-wrapper {
   flex: 1;
-  height: 100%;
   position: relative;
-  transition: all 0.2s ease;
+  transition: margin-left 0.3s ease;
+  margin-left: 0;
+  background-color: #ffffff;
+  width: 100%;
+  height: 100vh; /* 明确设置高度为视口高度 */
+  min-height: 500px; /* 设置最小高度，确保在任何情况下都有足够的空间 */
+}
+
+.flow-wrapper.with-sidebar {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+}
+
+/* 小屏幕设备上的流程图画布样式 */
+@media (max-width: 767px) {
+  .flow-wrapper.with-sidebar {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
 }
 
 .flow-wrapper.drag-over {
@@ -342,7 +455,9 @@ defineProps<{
 /* 拖拽相关样式 */
 .vue-flow-wrapper {
   width: 100%;
-  height: 100%;
+  height: 100vh; /* 明确设置高度为视口高度 */
+  min-height: 500px; /* 设置最小高度 */
+  display: block; /* 确保元素是块级元素 */
 }
 
 /* 禁止文本选择，防止拖拽时选中文本 */
@@ -371,7 +486,8 @@ defineProps<{
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 16px;
+    padding: 8px 10px;
+    overflow-y: auto;
   }
 
   .node-item {
@@ -391,6 +507,16 @@ defineProps<{
     border-color: #409eff;
   }
 
+  .node-icon {
+    font-size: 16px;
+  }
+
+  .node-label {
+    font-size: 14px;
+  }
+  :deep(.vue-flow__controls) {
+    display: flex;
+  }
 </style>
 
 

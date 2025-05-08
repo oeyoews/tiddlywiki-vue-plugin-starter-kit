@@ -14,7 +14,7 @@ export const initialNodes = [
   {
     id: '1',
     type: 'start',
-    position: { x: 50, y: 150 },
+    position: { x: 20, y: 250 },
     data: { label: 'TiddlyWiki简介' },
   },
   {
@@ -29,7 +29,7 @@ export const initialNodes = [
   {
     id: '3',
     type: 'text',
-    position: { x: 620, y: 50 },
+    position: { x: 620, y: 0 },
     data: {
       label: 'TiddlyWiki核心概念',
       text: `TiddlyWiki的核心概念：
@@ -44,7 +44,7 @@ export const initialNodes = [
   {
     id: '2',
     type: 'process',
-    position: { x: 320, y: 250 },
+    position: { x: 280, y: 250 },
     data: {
       label: 'TiddlyWiki工作流程',
       description: '创建、编辑、组织和保存知识的流程',
@@ -70,7 +70,7 @@ export const initialNodes = [
   {
     id: '5',
     type: 'card',
-    position: { x: 920, y: 250 },
+    position: { x: 920, y: 295 },
     data: {
       label: 'TiddlyWiki插件系统',
       title: '插件生态系统',
@@ -81,7 +81,7 @@ export const initialNodes = [
   {
     id: '6',
     type: 'text',
-    position: { x: 320, y: 450 },
+    position: { x: 320, y: 490 },
     data: {
       label: 'TiddlyWiki历史',
       text: `TiddlyWiki的发展历程：
@@ -98,7 +98,7 @@ export const initialNodes = [
   {
     id: '7',
     type: 'card',
-    position: { x: 620, y: 450 },
+    position: { x: 620, y: 550 },
     data: {
       label: 'TiddlyWiki使用场景',
       title: '应用场景',
@@ -109,7 +109,7 @@ export const initialNodes = [
   {
     id: '8',
     type: 'process',
-    position: { x: 920, y: 450 },
+    position: { x: 920, y: 600 },
     data: {
       label: 'TiddlyWiki保存方式',
       description: '单文件保存、Node.js服务器、TiddlyHost等多种保存方式',
