@@ -34,8 +34,12 @@ class PluginVueFlowWidget extends Widget {
 
     const getNodes = (tiddlers) => {
       return tiddlers.map((tiddler, index) => {
-        const { creator, title, tags, ...otherFields } =
-          $tw.wiki.getTiddler(tiddler)?.fields;
+        const {
+          creator = '',
+          title = '',
+          tags = [],
+          ...otherFields
+        } = $tw.wiki.getTiddler(tiddler)?.fields;
         const data = {
           id: `tiddler_${index}`,
           type: 'data',

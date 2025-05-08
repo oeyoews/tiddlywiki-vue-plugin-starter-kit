@@ -142,10 +142,6 @@ const handleNodeClick = () => {
   cursor: pointer;
 }
 
-.field-value:hover {
-  background-color: #f5f5f5;
-}
-
 .field-value-edit {
   width: 60%;
 }

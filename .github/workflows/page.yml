@@ -24,4 +24,4 @@ jobs:
           site-title: 'Tiddlywiki Vue Plugin Starter Kit'
           tiddlers-directory: ./wiki
           version: v5.3.6
-          default-home-tiddlers: 'Plugins'
+          # default-home-tiddlers: 'Plugins'
