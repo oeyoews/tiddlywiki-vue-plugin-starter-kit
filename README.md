@@ -26,3 +26,9 @@ pnpm dev ## debug component
 pnpm build ## build tiddlywiki app.js（please update cross-env plugin-name var)
 pnpm start ## preview tiddlywiki plugin
 ```
+
+## TODO
+
+* 自动整理布局
+* 自动存储edges, 支持拖拽
+* 直接过滤字段（widget.js)
