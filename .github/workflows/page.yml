@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: oeyoews/tiddlywiki-publish@main
         with:
-          site-title: 'tiddlywiki vue plugin starter kit'
+          site-title: 'Tiddlywiki Vue Plugin Starter Kit'
           tiddlers-directory: ./wiki
           version: v5.3.6
-          default-home-tiddlers: '[[$:/plugins/oeyoews/vue-flow/readme]]'
+          default-home-tiddlers: 'Plugins'
