@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { Position, NodeProps, Handle } from '@vue-flow/core';
-// import { ref } from 'vue';
-
-// const supportedFields = ['title', 'creator', 'description', 'url'];
 
 // 获取节点属性
 const props = defineProps<NodeProps>();
@@ -12,12 +9,15 @@ const filterFields = (fields: any) =>
     .filter((key) => key !== 'tags')
     .map((key) => ({ key, value: fields[key] }));
 
+// 如果卡片更新了， 动态获取？？？
 const fields = filterFields(props.data.fields);
 const tagsList = props.data.fields?.tags || [];
 // TODO: color support
 
 const title = props.data.fields.title;
-const handleNodeClick = () => new $tw.Story().navigateTiddler(title);
+const handleNodeClick = () => {
+  if ($tw) new $tw.Story().navigateTiddler(title);
+};
 </script>
 
 <template>

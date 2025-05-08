@@ -6,11 +6,42 @@ import {
   VueFlow,
   Panel,
   Position,
+  Node,
+  Edge,
 } from '@vue-flow/core';
 // import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 // @ts-ignore
 // import { MiniMap } from '@vue-flow/minimap';
+
+// 保存流程图数据的方法
+const saveFlowData = () => {
+  if (!$tw) return;
+
+  // 获取当前节点和边的信息
+  const nodes = getNodes.value;
+  const edges = getEdges.value;
+
+  // 将节点和边数据转换为JSON字符串
+  const nodesData = JSON.stringify(nodes, null, 2);
+  const edgesData = JSON.stringify(edges, null, 2);
+
+  // 保存到TiddlyWiki
+  $tw.wiki.setText(props.data.currentTiddler, '_nodes', null, nodesData);
+  $tw.wiki.setText(props.data.currentTiddler, '_edges', null, edgesData);
+
+  // 显示保存成功消息
+  showSaveMessage();
+};
+
+// 显示保存成功消息
+const saveMessage = ref('');
+const showSaveMessage = () => {
+  saveMessage.value = '保存成功！';
+  setTimeout(() => {
+    saveMessage.value = '';
+  }, 3000);
+};
 
 import '@vue-flow/core/dist/style.css';
 import '@vue-flow/controls/dist/style.css';
@@ -50,6 +81,8 @@ const {
   fitView,
   setNodes,
   setEdges,
+  getNodes,
+  getEdges,
   onNodeDragStart,
   onNodeDragStop,
   onPaneReady,
@@ -77,6 +110,9 @@ onMounted(() => {
     }, 100);
   });
 });
+
+// 不监听节点和边的变化，不自动保存
+// 只在用户点击保存按钮时保存edges
 
 // 处理连接
 onConnect((params) => {
@@ -159,7 +195,7 @@ const toggleSidebar = () => {
 };
 
 // 使用自动排序hook
-const { applyHorizontalLayout, applyVerticalLayout } = useAutoLayout({
+const { applyHorizontalLayout } = useAutoLayout({
   // 默认使用水平布局
   direction: 'LR',
   nodeWidth: 180,
@@ -264,11 +300,16 @@ const { applyHorizontalLayout, applyVerticalLayout } = useAutoLayout({
               class="auto-layout-btn">
               水平排序
             </button>
-            <!-- <button
-              @click="applyVerticalLayout"
-              class="auto-layout-btn vertical-btn">
-              垂直排序
-            </button> -->
+            <button
+              @click="saveFlowData"
+              class="save-btn">
+              保存
+            </button>
+            <div
+              v-if="saveMessage"
+              class="save-message">
+              {{ saveMessage }}
+            </div>
           </div>
         </Panel>
       </VueFlow>
@@ -474,6 +515,38 @@ const { applyHorizontalLayout, applyVerticalLayout } = useAutoLayout({
 
 .custom-panel .vertical-btn:hover {
   background-color: #e68a00;
+}
+
+.custom-panel .save-btn {
+  background-color: #673ab7;
+}
+
+.custom-panel .save-btn:hover {
+  background-color: #5e35b1;
+}
+
+.save-message {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background-color: rgba(76, 175, 80, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 :deep(.vue-flow__node) {

@@ -26,7 +26,9 @@ class PluginVueFlowWidget extends Widget {
       window.Vue = require(vuelib);
       window.vue = require(vuelib);
     }
-    const { filter = '[!is[system]!sort[modified]limit[4]]' } = this.attributes;
+    const { filter = '[!is[system]!sort[modified]limit[10]]' } =
+      this.attributes;
+    const currentTiddler = this.getVariable('currentTiddler');
 
     const tiddlers = $tw.wiki.filterTiddlers(filter);
 
@@ -89,9 +91,45 @@ class PluginVueFlowWidget extends Widget {
       return edges;
     };
 
+    // 获取默认的节点和边
+    const defaultNodes = getNodes(tiddlers);
+    const defaultEdges = getEdges(tiddlers);
+
+    // 检查是否有存储的节点和边数据
+    let storedNodes = null;
+    let storedEdges = null;
+    let useStoredData = true;
+
+    try {
+      // 获取存储的节点数据
+      const nodesField = $tw.wiki.getTiddler(currentTiddler)?.fields._nodes;
+      if (nodesField) {
+        storedNodes = JSON.parse(nodesField);
+
+        // 检查存储的节点数量和传递的节点数量是否匹配
+        if (storedNodes.length !== defaultNodes.length) {
+          console.log(
+            'Stored nodes count does not match default nodes count. Using default data.'
+          );
+          useStoredData = false;
+        }
+      }
+
+      // 获取存储的边数据
+      const edgesField = $tw.wiki.getTiddler(currentTiddler)?.fields._edges;
+      if (edgesField) {
+        storedEdges = JSON.parse(edgesField);
+      }
+    } catch (e) {
+      console.error('Error parsing stored data:', e);
+      useStoredData = false;
+    }
+
+    // 如果节点数量不匹配或解析出错，使用默认数据
     const data = {
-      nodes: getNodes(tiddlers),
-      edges: getEdges(tiddlers),
+      nodes: useStoredData && storedNodes ? storedNodes : defaultNodes,
+      edges: useStoredData && storedEdges ? storedEdges : defaultEdges,
+      currentTiddler,
     };
 
     const { createApp } = window.Vue;
