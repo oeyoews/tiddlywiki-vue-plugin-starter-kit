@@ -1,3 +1,3 @@
-list: $:/ControlPanel $:/plugins/oeyoews/example
+list: $:/plugins/oeyoews/vue-table $:/plugins/oeyoews/example
 title: $:/StoryList
 type: text/vnd.tiddlywiki

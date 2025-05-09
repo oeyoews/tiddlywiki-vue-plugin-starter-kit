@@ -26,14 +26,14 @@ class PluginVuetableWidget extends Widget {
       window.Vue = require(vuelib);
       window.vue = require(vuelib);
     }
-    const {title} = this.attributes;
+    const { filter = '[!is[system]]' } = this.attributes;
 
     const { createApp } = window.Vue;
     const component = require('./app');
     const domNode = this.document.createElement('div');
     const props = {
-      title: title || "vue-table"
-    }
+      tiddlers: $tw.wiki.filterTiddlers(filter),
+    };
 
     try {
       const app = createApp(component(props)());

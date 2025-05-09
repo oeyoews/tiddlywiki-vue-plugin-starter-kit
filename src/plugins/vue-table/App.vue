@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import Table from '~/vue-table/components/Table.vue';
+import './global.css';
 
-defineProps<{
-  title?: string;
-  theme?: string;
-  showLogos?: boolean;
-}>();
+withDefaults(
+  defineProps<{
+    tiddlers?: string[];
+  }>(),
+  {
+    tiddlers: () => ['a'],
+  }
+);
 </script>
 
 <template>
   <div class="vue-table-plugin">
-    <h2>{{ title || 'vue-table' }}</h2>
-    <Table />
+    <Table :tiddlers />
   </div>
 </template>
 
