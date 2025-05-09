@@ -26,7 +26,14 @@ class PluginVuetableWidget extends Widget {
       window.Vue = require(vuelib);
       window.vue = require(vuelib);
     }
-    const { filter = '[!is[system]]' } = this.attributes;
+    let filter = '[!is[system]]';
+    if (this.attributes?.filter) {
+      filter = this.attributes.filter;
+    }
+    const currentTiddler = this.getVariable('currentTiddler');
+    if (this.attributes?.tags == 'tags') {
+      filter = `[tag[${currentTiddler}]]`;
+    }
 
     const { createApp } = window.Vue;
     const component = require('./app');
