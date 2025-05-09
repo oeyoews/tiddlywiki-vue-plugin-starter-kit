@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import App from './plugins/example/App.vue';
+import App from '~/vue-table/App.vue';
 
 const app = createApp(App);
 

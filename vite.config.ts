@@ -4,7 +4,10 @@ import vue from '@vitejs/plugin-vue';
 import { copyDist } from './vite-plugins/copy-dist/index';
 import path from 'path';
 import fs from 'fs';
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from '@tailwindcss/vite';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // 从环境变量获取插件名称
 const pluginName = process.env.PLUGIN_NAME || null;
@@ -74,6 +77,12 @@ const createPluginConfig = (plugin) => {
     },
     plugins: [
       vue(),
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
       copyDist(plugin), // 传递插件名称给copyDist
     ],
     define: {

@@ -7,7 +7,7 @@
   "compilerOptions": {
     "target": "ES2021",
     "moduleResolution": "node",
-    "types": ["node", "tw5-typed"],
+    "types": ["node", "tw5-typed", "element-plus/global"],
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./src/plugins/*"]

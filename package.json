@@ -6,35 +6,36 @@
   "scripts": {
     "dev": "vite",
     "start": "tiddlywiki ./wiki --listen",
-    "build": "cross-env PLUGIN_NAME='example' vite build --mode=prod",
+    "build": "cross-env PLUGIN_NAME='vue-table' vite build --mode=prod",
     "build:plugin": "vite build",
     "build:all": "node scripts/build-all-plugins.js",
     "new": "node scripts/create-plugin.js"
   },
   "devDependencies": {
-    "@egoist/tailwindcss-icons": "^1.9.0",
-    "@iconify/json": "^2.2.336",
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@dagrejs/dagre": "^1.1.4",
     "@vue-flow/background": "^1.3.2",
     "@vue-flow/controls": "^1.1.2",
     "@vue-flow/core": "^1.43.1",
     "@vue-flow/minimap": "^1.5.3",
+    "danmaku-vue": "^1.0.2"
+  },
+  "dependencies": {
+    "@egoist/tailwindcss-icons": "^1.9.0",
+    "@iconify/json": "^2.2.336",
+    "@vitejs/plugin-vue": "^5.2.3",
     "@vue/tsconfig": "^0.7.0",
     "autoprefixer": "^10.4.21",
     "cross-env": "^7.0.3",
+    "element-plus": "^2.9.10",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
+    "tiddlywiki": "^5.3.6",
     "tw5-typed": "^0.6.3",
     "typescript": "~5.8.3",
+    "unplugin-auto-import": "^19.2.0",
+    "unplugin-vue-components": "^28.5.0",
     "vite": "^6.3.5",
     "vue": "^3.5.13",
     "vue-tsc": "^2.2.8"
-  },
-  "dependencies": {
-    "@dagrejs/dagre": "^1.1.4",
-    "danmaku-vue": "^1.0.2",
-    "sass-embedded": "^1.87.0",
-    "tiddlywiki": "^5.3.6",
-    "vue-command-palette": "^0.2.3"
   }
 }
