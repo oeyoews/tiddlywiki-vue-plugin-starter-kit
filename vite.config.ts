@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import { copyDist } from './vite-plugins/copy-dist/index';
 import path from 'path';
 import fs from 'fs';
+import tailwindcss from '@tailwindcss/vite'
 
 // 从环境变量获取插件名称
 const pluginName = process.env.PLUGIN_NAME || null;
@@ -50,6 +51,7 @@ const createPluginConfig = (plugin) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        '~': path.resolve(__dirname, 'src/plugins'),
       },
     },
     build: {

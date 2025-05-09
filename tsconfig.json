@@ -9,7 +9,8 @@
     "moduleResolution": "node",
     "types": ["node", "tw5-typed"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "~/*": ["./src/plugins/*"]
     }
   },
   "include": ["./src/**/*", "./src/**.d.ts"]
