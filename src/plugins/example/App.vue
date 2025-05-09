@@ -10,7 +10,9 @@ defineProps<{
 </script>
 
 <template>
+  <div class="i-[simple-icons--tiddlywiki]"></div> Hello
   <HelloWorld :msg="title" />
+
 </template>
 
 <style scoped>
