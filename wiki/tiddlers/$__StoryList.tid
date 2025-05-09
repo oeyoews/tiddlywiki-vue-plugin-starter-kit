@@ -1,2 +1,3 @@
-list: $:/plugins/oeyoews/vue-table $:/plugins/oeyoews/example
+list: vue-tables Home
 title: $:/StoryList
+type: text/vnd.tiddlywiki
