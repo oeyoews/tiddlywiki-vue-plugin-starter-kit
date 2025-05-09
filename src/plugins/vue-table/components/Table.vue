@@ -1,13 +1,23 @@
 <template>
   <div class="table-container">
     <!-- 搜索框 -->
-    <div class="search-container">
+    <div class="search-container mb-5 flex justify-end items-center">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="[20, 40, 60]"
+        :pager-count="5"
+        layout="total, prev, pager, next, sizes,"
+        :total="filteredData?.length"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
+      <el-divider direction="vertical" />
       <el-input
         v-model="searchQuery"
         placeholder="Search..."
         clearable
         @input="handleSearch"
-        style="width: 300px; margin-bottom: 15px">
+        style="width: 300px">
         <template #prefix>
           <i class="i-[material-symbols--search]"></i>
           <!-- <ele-Search /> -->
@@ -40,18 +50,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <!-- 分页器 -->
-    <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[20, 40, 60]"
-        layout="total, sizes, prev, pager, next"
-        :total="filteredData?.length"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
-    </div>
   </div>
 </template>
 
@@ -112,23 +110,6 @@ const handleSizeChange = (val: number) => {
 </script>
 
 <style scoped>
-/* .table-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-} */
-
-.search-container {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.pagination-container {
-  margin-top: 15px;
-  display: flex;
-  justify-content: flex-end;
-}
-
 :deep(.el-table__body),
 :deep(.el-table__header) {
   margin: 0 auto;
