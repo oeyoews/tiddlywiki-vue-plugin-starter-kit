@@ -76,7 +76,7 @@ const pageSize = ref(20);
 
 // 根据搜索条件过滤数据
 const filteredData = computed(() => {
-  if (props.tiddlers?.length == 0) {
+  if (!props.tiddlers?.length || props.tiddlers?.length == 0) {
     return;
   }
   if (!searchQuery.value) {
@@ -89,7 +89,7 @@ const filteredData = computed(() => {
 // 根据当前页和每页数量计算分页数据
 const paginatedData = computed(() => {
   const startIndex = (currentPage.value - 1) * pageSize.value;
-  return filteredData.value.slice(startIndex, startIndex + pageSize.value);
+  return filteredData.value?.slice(startIndex, startIndex + pageSize.value);
 });
 
 // 处理搜索
