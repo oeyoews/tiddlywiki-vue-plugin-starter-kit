@@ -76,20 +76,31 @@
     <div
       class="overflow-y-auto p-4 pt-0"
       :class="[sidebarOpen ? 'w-4/7' : 'flex-1']">
-      <div v-if="selectedArticle">
-        <h3 class="text-xl font-bold mb-4 sticky py-1 top-0 z-10">
-          {{ selectedArticle.title }}
-        </h3>
-        <p class="text-sm text-gray-500 mb-4">
-          {{ selectedArticle.author }}, {{ selectedArticle.date }}
-        </p>
-        <p
-          v-html="selectedArticle.content"
-          class="prose max-w-none"></p>
-      </div>
-      <template v-else>
-        <div class="text-gray-400 text-center mt-20">暂无文章</div>
-      </template>
+      <transition
+        name="fade"
+        mode="out-in">
+        <div
+          v-if="loadingArticle"
+          key="skeleton"></div>
+        <div
+          v-else-if="selectedArticle"
+          key="article">
+          <h3 class="text-xl font-bold mb-4 sticky py-1 top-0 z-10">
+            {{ selectedArticle.title }}
+          </h3>
+          <p class="text-sm text-gray-500 mb-4">
+            {{ selectedArticle.author }}, {{ selectedArticle.date }}
+          </p>
+          <p
+            v-html="selectedArticle.content"
+            class="prose max-w-none"></p>
+        </div>
+        <div
+          v-else
+          key="empty">
+          <div class="text-gray-400 text-center mt-20">暂无文章</div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -155,6 +166,7 @@ const articles = computed(() => {
 
 // 选中的文章
 const selectedArticle = ref(null);
+const loadingArticle = ref(false);
 
 // 拉取并解析 RSS 源
 async function fetchFeedArticles(feed) {
@@ -200,7 +212,11 @@ async function selectFeed(feedName) {
 }
 
 function selectArticle(article) {
-  selectedArticle.value = article;
+  loadingArticle.value = true;
+  setTimeout(() => {
+    selectedArticle.value = article;
+    loadingArticle.value = false;
+  }, 300); // skeleton 显示时间，可根据需要调整
 }
 
 // 新增 RSS 源
@@ -254,3 +270,14 @@ onMounted(async () => {
   });
 });
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
