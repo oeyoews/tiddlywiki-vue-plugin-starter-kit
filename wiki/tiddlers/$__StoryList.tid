@@ -1,3 +1,3 @@
-list: $:/ControlPanel $:/plugins/oeyoews/vue-table vue-tables Home
+list: $:/ControlPanel $:/plugins/oeyoews/vue-rss-plus vue-tables Home
 title: $:/StoryList
 type: text/vnd.tiddlywiki

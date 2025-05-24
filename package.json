@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "start": "tiddlywiki ./wiki --listen",
-    "build": "cross-env PLUGIN_NAME='vue-table' vite build --mode=prod",
+    "build": "cross-env PLUGIN_NAME='vue-rss-plus' vite build --mode=prod",
     "build:plugin": "vite build",
     "build:all": "node scripts/build-all-plugins.js",
     "new": "node scripts/create-plugin.js"
