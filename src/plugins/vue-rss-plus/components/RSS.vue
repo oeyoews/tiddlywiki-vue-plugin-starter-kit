@@ -1,6 +1,5 @@
 <template>
-  <div
-    class="flex h-screen bg-gradient-to-tr from-blue-50 via-white to-purple-100">
+  <div class="flex h-screen">
     <!-- Sidebar Toggle Button -->
     <!-- Left Sidebar -->
     <MenuIcon
@@ -39,7 +38,7 @@
           class="flex items-center"
           @click="addFeed"
           :disabled="!newFeedUrl.trim()">
-          <i class="i-[material-symbols--add-rounded]"></i>
+          <PlusIcon class="size-4" />
           Add
         </button>
       </div>
@@ -69,11 +68,8 @@
       </div>
     </div>
     <!-- Middle Column (Article List) -->
-    <div
-      class="overflow-y-auto p-6 bg-white/60 backdrop-blur-lg rounded-xl mx-4 shadow-lg border border-blue-50 w-1/4">
-      <h2 class="text-lg font-semibold mb-4 text-blue-700 drop-shadow">
-        Articles
-      </h2>
+    <div class="overflow-y-auto p-3 w-1/4">
+      <h2 class="text-lg font-semibold mb-4">Articles</h2>
       <div>
         <ArticleCard
           v-for="article in articles"
@@ -86,11 +82,12 @@
     <!-- Right Column (Article Content) -->
     <div
       :class="[
-        'overflow-y-auto bg-white/80 backdrop-blur-lg p-8 shadow-2xl rounded ',
+        'overflow-y-auto p-4',
         sidebarOpen ? 'w-1/2' : 'flex-1',
+        'overflow-hidden',
       ]">
       <template v-if="selectedArticle">
-        <h2 class="text-2xl font-bold mb-4 text-purple-700 drop-shadow">
+        <h2 class="text-xl font-bold mb-4">
           {{ selectedArticle.title }}
         </h2>
         <p class="text-sm text-gray-500 mb-4">
@@ -116,6 +113,8 @@ import RssIcon from '~icons/tw-icons/rss';
 import LogoutIcon from '~icons/tw-icons/logout';
 // @ts-ignore
 import MenuIcon from '~icons/tw-icons/menu';
+// @ts-ignore
+import PlusIcon from '~icons/tw-icons/plus';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';
