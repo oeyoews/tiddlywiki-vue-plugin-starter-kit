@@ -63,15 +63,18 @@
       </div>
     </div>
     <!-- Middle Column (Article List) -->
-    <div class="overflow-y-auto p-3 w-2/7">
-      <h2 class="text-lg font-semibold mb-4">Articles</h2>
-      <ArticleCard
-        v-for="article in articles"
-        :key="article.id"
-        :article="article"
-        @click="selectArticle(article)" />
+    <div class="overflow-y-auto p-4 w-2/7">
+      <h2 class="text-lg mb-3 font-semibold">Articles</h2>
+      <transition-group
+        name="fade"
+        tag="div">
+        <ArticleCard
+          v-for="article in articles"
+          :key="article.id"
+          :article="article"
+          @click="selectArticle(article)" />
+      </transition-group>
     </div>
-
     <!-- Right Column (Article Content) -->
     <div
       class="overflow-y-auto p-4 pt-0"
@@ -85,7 +88,7 @@
         <div
           v-else-if="selectedArticle"
           key="article">
-          <h3 class="text-xl font-bold mb-4 sticky py-1 top-0 z-10">
+          <h3 class="text-xl font-bold mb-4 -sticky py-1 top-0 z-10">
             {{ selectedArticle.title }}
           </h3>
           <p class="text-sm text-gray-500 mb-4">
@@ -216,7 +219,7 @@ function selectArticle(article) {
   setTimeout(() => {
     selectedArticle.value = article;
     loadingArticle.value = false;
-  }, 300); // skeleton 显示时间，可根据需要调整
+  }, 100); // skeleton 显示时间，可根据需要调整
 }
 
 // 新增 RSS 源
@@ -279,5 +282,9 @@ onMounted(async () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+/* 可选：让 transition-group 的元素淡入淡出时有更自然的动画 */
+.fade-move {
+  transition: transform 0.3s;
 }
 </style>

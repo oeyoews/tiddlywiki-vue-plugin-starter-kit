@@ -6,11 +6,13 @@
     <img
       :src="feed.favicon"
       class="size-3 rounded-full mr-1" />
-    <span class="flex-1 text-left">{{ feed.name }}</span>
-    <span
-      class="text-xs text-gray-500 group-hover:text-gray-700 italic"
-      v-show="feed.count > 0">
-      {{ feed.count }}
+    <span class="flex-1 text-eft">
+      {{ feed.name }}
+      <span
+        class="text-xs text-gray-500 group-hover:text-gray-700 italic"
+        v-show="feed.count > 0">
+        ({{ feed.count }})
+      </span>
     </span>
   </div>
 </template>

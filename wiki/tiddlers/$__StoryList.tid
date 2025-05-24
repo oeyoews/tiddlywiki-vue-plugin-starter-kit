@@ -1,2 +1,3 @@
 list: $:/Import $:/ControlPanel $:/plugins/oeyoews/vue-rss-plus vue-tables Home
 title: $:/StoryList
+type: text/vnd.tiddlywiki
