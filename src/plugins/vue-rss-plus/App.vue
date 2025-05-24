@@ -12,9 +12,6 @@ const props = defineProps<{
 
 <template>
   <div class="vue-rss-plus-plugin">
-    <h2>{{ title || 'vue-rss-plus' }}</h2>
     <RSS />
   </div>
 </template>
-
-<style scoped></style>
