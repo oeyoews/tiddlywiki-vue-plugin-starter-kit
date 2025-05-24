@@ -1,8 +1,21 @@
-// @ts-nocheck
-import { resolve } from 'path';
+// import { resolve } from 'path';
 import fs from 'fs';
 import path from 'path';
 import { copyFileWithMeta } from './meta-generator';
+
+// // 递归删除文件夹内容（不删除文件夹本身）
+// function emptyDir(dir: string) {
+//   if (!fs.existsSync(dir)) return;
+//   for (const file of fs.readdirSync(dir)) {
+//     const curPath = path.join(dir, file);
+//     if (fs.lstatSync(curPath).isDirectory()) {
+//       emptyDir(curPath);
+//       fs.rmdirSync(curPath);
+//     } else {
+//       fs.unlinkSync(curPath);
+//     }
+//   }
+// }
 
 export const copyDist = (pluginName = 'example') => ({
   name: 'copy-to-tiddlywiki',
@@ -21,6 +34,9 @@ export const copyDist = (pluginName = 'example') => ({
       const fullPluginDir = path.resolve(rootDir, pluginDir);
       if (!fs.existsSync(fullPluginDir)) {
         fs.mkdirSync(fullPluginDir, { recursive: true });
+      } else {
+        // 如果文件有多余建议手动删除
+        // emptyDir(fullPluginDir);
       }
 
       const fullTargetDir = path.resolve(rootDir, targetDir);
