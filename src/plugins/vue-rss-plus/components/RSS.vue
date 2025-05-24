@@ -6,8 +6,9 @@
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
           Feeds
-          <i
-            class="i-[vscode-icons--file-type-rss] text-orange-400 animate-pulse"></i>
+          <RssIcon class="size-4" />
+          <!-- <i
+            class="i-[vscode-icons--file-type-rss] text-orange-400 animate-pulse"></i> -->
         </h2>
       </div>
 
@@ -94,7 +95,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { rss2json } from '../utils/index';
+import { rss2json } from '~/vue-rss-plus/utils';
+// @ts-ignore
+import RssIcon from '~icons/tw-icons/rss';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';

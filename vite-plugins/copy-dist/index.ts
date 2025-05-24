@@ -16,7 +16,7 @@ export const copyDist = (pluginName = 'example') => ({
       const targetDir = pluginDir + `tiddlers/`;
       // 定义源插件目录
       const srcPluginDir = path.resolve(rootDir, `src/plugins/${pluginName}`);
-      const distPluginDir = path.resolve(rootDir, 'dist-' + pluginName)
+      const distPluginDir = path.resolve(rootDir, 'dist-' + pluginName);
 
       const fullPluginDir = path.resolve(rootDir, pluginDir);
       if (!fs.existsSync(fullPluginDir)) {
@@ -55,11 +55,12 @@ export const copyDist = (pluginName = 'example') => ({
       }
 
       // 插件的所有样式会放到app.css 里面
-      const cssSourcePath = path.resolve(distPluginDir, 'app.css');
-      if (fs.existsSync(cssSourcePath)) {
-        const cssTargetPath = path.resolve(rootDir, targetDir, 'app.css');
-        copyFileWithMeta(cssSourcePath, cssTargetPath, pluginName);
-      }
+      // disable tailwindcss for v4
+      // const cssSourcePath = path.resolve(distPluginDir, 'app.css');
+      // if (fs.existsSync(cssSourcePath)) {
+      //   const cssTargetPath = path.resolve(rootDir, targetDir, 'app.css');
+      //   copyFileWithMeta(cssSourcePath, cssTargetPath, pluginName);
+      // }
 
       // 复制 widget.js， plugin.info, readme.tid
       const exts = ['.js', '.info', '.tid'];

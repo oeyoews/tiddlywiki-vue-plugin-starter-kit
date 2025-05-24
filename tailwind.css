@@ -1,0 +1,13 @@
+@theme {
+	--color-dimmed-100: #cdd9e5;
+	--color-dimmed-200: #d0d7de;
+	--color-dimmed-700: #444c56;
+	--color-dimmed-800: #2d333b;
+	--color-dimmed-900: #1c2128;
+}
+
+/* @config './tailwind.config.js'; */
+@custom-variant dark (&:where(.dark, .dark *));
+@layer theme, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);

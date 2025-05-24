@@ -10,7 +10,8 @@
     "types": ["node", "tw5-typed", "element-plus/global"],
     "paths": {
       "@/*": ["./src/*"],
-      "~/*": ["./src/plugins/*"]
+      "~/*": ["./src/plugins/*"],
+      "@tw": ["./tailwind.css"]
     }
   },
   "include": ["./src/**/*", "./src/**.d.ts"]

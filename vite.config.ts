@@ -1,13 +1,15 @@
-// @ts-nocheck
+import Icons from 'unplugin-icons/vite';
+
+import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { copyDist } from './vite-plugins/copy-dist/index';
 import path from 'path';
 import fs from 'fs';
-import tailwindcss from '@tailwindcss/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import tailwindcss from '@tailwindcss/vite';
 
 // 从环境变量获取插件名称
 const pluginName = process.env.PLUGIN_NAME || null;
@@ -55,6 +57,7 @@ const createPluginConfig = (plugin) => {
       alias: {
         '@': path.resolve(__dirname, 'src'),
         '~': path.resolve(__dirname, 'src/plugins'),
+        '@tw': path.resolve(__dirname, './tailwind.css'),
       },
     },
     build: {
@@ -77,6 +80,14 @@ const createPluginConfig = (plugin) => {
     },
     plugins: [
       vue(),
+      tailwindcss(),
+      Icons({
+        customCollections: {
+          'tw-icons': FileSystemIconLoader('./assets/icons', (svg) => {
+            return svg.replace(/^<svg /, '<svg fill="currentColor" ');
+          }),
+        },
+      }),
       AutoImport({
         resolvers: [ElementPlusResolver()],
       }),
