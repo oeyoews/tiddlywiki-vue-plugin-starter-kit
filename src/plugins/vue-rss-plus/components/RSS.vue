@@ -106,6 +106,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { rss2json } from '../utils/index';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';
@@ -151,29 +152,28 @@ const selectedArticle = ref(null);
 // 拉取并解析 RSS 源
 async function fetchFeedArticles(feed) {
   if (!feed.url) return;
-  // 避免重复拉取
+  let rssData = feed.url;
+  if (window?.electronAPI) {
+    rssData = await window.electronAPI?.startFetchRSSData({
+      url: feed.url,
+    });
+  }
+
   if (feed.articles && feed.articles.length > 0) return;
   try {
-    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(
-      feed.url
-    )}`;
-    const res = await fetch(apiUrl);
-    const data = await res.json();
-    if (data.status === 'ok' && Array.isArray(data.items)) {
-      feed.articles = data.items.map((item, idx) => ({
-        id: idx,
-        title: item.title,
-        summary: item.description?.replace(/<[^>]+>/g, '').slice(0, 100) || '',
-        author: item.author || '',
-        date: item.pubDate || '',
-        content: item.content || item.description || '',
-        link: item.link,
-      }));
-      feed.count = feed.articles.length;
-    } else {
-      feed.articles = [];
-      feed.count = 0;
-    }
+    const { channel, items } = await rss2json(rssData);
+    feed.articles = items.map((item, idx) => ({
+      id: idx,
+      title: item.title,
+      summary: item.summary?.replace(/<[^>]+>/g, '').slice(0, 100) || '',
+      author: channel.title || '',
+      date: item.pubDate || '',
+      content: item.summary || '',
+      link: item.link,
+      src: item.src,
+      mp3: item.mp3,
+    }));
+    feed.count = feed.articles.length;
   } catch (e) {
     feed.articles = [];
     feed.count = 0;

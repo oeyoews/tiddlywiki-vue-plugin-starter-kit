@@ -1,0 +1,6 @@
+title: $:/plugins/oeyoews/vue-rss-plus/Layout
+name: {{$:/plugins/oeyoews/vue-kanban/icon}} vue rss plus
+description: {{$:/plugins/oeyoews/vue-rss-plus/readme!!description}}
+tags: $:/tags/Layout
+
+<$vue-rss-plus />
