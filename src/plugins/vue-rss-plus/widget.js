@@ -1,12 +1,12 @@
 /*\
-title: $:/plugins/oeyoews/vue-table/widget.js
+title: $:/plugins/oeyoews/vue-rss-plus/widget.js
 type: application/javascript
 module-type: widget
 
 \*/
 const { widget: Widget } = require('$:/core/modules/widgets/widget.js');
 
-class PluginVuetableWidget extends Widget {
+class PluginVuerssplusWidget extends Widget {
   constructor(parseTreeNode, options) {
     super(parseTreeNode, options);
   }
@@ -26,28 +26,21 @@ class PluginVuetableWidget extends Widget {
       window.Vue = require(vuelib);
       window.vue = require(vuelib);
     }
-    let filter = '[!is[system]!sort[modified]]';
-    if (this.attributes?.filter) {
-      filter = this.attributes.filter;
-    }
-    const currentTiddler = this.getVariable('currentTiddler');
-    if (this.attributes?.tags == 'tags') {
-      filter = `[tag[${currentTiddler}]!sort[modified]]`;
-    }
+    const {title} = this.attributes;
 
     const { createApp } = window.Vue;
     const component = require('./app');
     const domNode = this.document.createElement('div');
     const props = {
-      tiddlers: $tw.wiki.filterTiddlers(filter),
-    };
+      title: title || "vue-rss-plus"
+    }
 
     try {
       const app = createApp(component(props)());
 
       app.config.errorHandler = (err) => {
         const text = `[Vue3](${app.version}): ` + err;
-        console.error(text, '(vue-table plugin)');
+        console.error(text, '(vue-rss-plus plugin)');
         domNode.textContent = text;
         domNode.style.color = 'red';
       };
@@ -58,9 +51,9 @@ class PluginVuetableWidget extends Widget {
       parent.insertBefore(domNode, nextSibling);
       this.domNodes.push(domNode);
     } catch (e) {
-      console.error(e.message, 'vue-table plugin');
+      console.error(e.message, 'vue-rss-plus plugin');
     }
   }
 }
 
-exports['vue-table'] = PluginVuetableWidget;
+exports['vue-rss-plus'] = PluginVuerssplusWidget;
