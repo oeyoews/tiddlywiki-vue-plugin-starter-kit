@@ -54,6 +54,11 @@
               @load="selectFeed(feed.name)" />
           </div>
         </div>
+        <div class="bottom-1 absolute">
+          <LogoutIcon
+            class="cursor-pointer text-gray-500 size-4"
+            @click="goHome" />
+        </div>
       </div>
     </div>
 
@@ -98,11 +103,14 @@ import { ref, computed, onMounted } from 'vue';
 import { rss2json } from '~/vue-rss-plus/utils';
 // @ts-ignore
 import RssIcon from '~icons/tw-icons/rss';
+// @ts-ignore
+import LogoutIcon from '~icons/tw-icons/logout';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';
 import { rssUrls } from './mockFeeds';
 import tiddlywikiIcon from '../assets/icon.svg';
+const goHome = () => $tw.wiki.deleteTiddler('$:/layout');
 
 // 获取 favicon 的工具函数（返回 base64）
 async function getFaviconBase64(url: string): Promise<string> {
