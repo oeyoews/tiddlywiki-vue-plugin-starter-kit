@@ -2,8 +2,7 @@
   <div
     class="flex h-screen bg-gradient-to-tr from-blue-50 via-white to-purple-100">
     <!-- Left Sidebar -->
-    <div
-      class="w-64 p-4 shadow-xl rounded-r-3xl bg-white/80 backdrop-blur-md border-r border-blue-100">
+    <div class="w-64 p-4 bg-white/80 backdrop-blur-md border-r border-blue-100">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
           Feeds
@@ -13,23 +12,23 @@
       </div>
 
       <!-- Search Bar -->
-      <div class="relative mb-4">
+      <div class="mb-4 flex">
         <input
           v-model="searchTerm"
           type="text"
           placeholder="Search feeds..."
-          class="w-full p-2 rounded-lg border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white/70 backdrop-blur placeholder:text-gray-400" />
+          class="w-full p-2" />
       </div>
 
       <!-- Add RSS Feed -->
-      <div class="flex mb-4 space-x-2">
+      <div class="flex mb-4 justify-between">
         <input
           v-model="newFeedUrl"
           type="text"
           placeholder="Add RSS URL"
-          class="flex-1 p-2 rounded-lg border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white/70 backdrop-blur placeholder:text-gray-400" />
+          class="p-2 rounded border placeholder:text-gray-400" />
         <button
-          class=""
+          class="flex items-center rounded"
           @click="addFeed"
           :disabled="!newFeedUrl.trim()">
           <i class="i-[material-symbols--add-rounded]"></i>
@@ -112,7 +111,7 @@ import { rss2json } from '../utils/index';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';
-import { rssUrls } from './mockFeeds.js';
+import { rssUrls } from './mockFeeds';
 import tiddlywikiIcon from '../assets/icon.svg';
 
 // 获取 favicon 的工具函数（返回 base64）
@@ -139,19 +138,6 @@ const newFeedUrl = ref('');
 
 // 根据 rssUrls 初始化 feeds（异步获取 base64 favicon）
 const feeds = ref<any[]>([]);
-(async () => {
-  for (const url of rssUrls) {
-    let name = new URL(url).hostname;
-    const favicon = await getFaviconBase64(url);
-    feeds.value.push({
-      name,
-      url,
-      count: 0,
-      articles: [],
-      favicon,
-    });
-  }
-})();
 
 const filteredFeeds = computed(() => {
   return feeds.value.filter((feed) =>
@@ -203,7 +189,7 @@ async function fetchFeedArticles(feed) {
 }
 
 async function selectFeed(feedName) {
-  console.log('调用', feedName);
+  console.log('hh');
   selectedFeed.value = feedName;
   const feed = feeds.value.find((f) => f.name === feedName);
   if (feed) {
@@ -245,10 +231,28 @@ async function addFeed() {
     feed.articles && feed.articles.length > 0 ? feed.articles[0] : null;
 }
 
-onMounted(() => {
-  // 初始化默认选中第一个 feed 并拉取数据
+onMounted(async () => {
+  // 初始化时先快速填充 feeds 列表（favicon 先留空）
+  for (const url of rssUrls.filter((item) => item.startsWith('http'))) {
+    let name = new URL(url).hostname;
+    feeds.value.push({
+      name,
+      url,
+      count: 0,
+      articles: [],
+      favicon: '',
+    });
+  }
+
+  // 立即选中第一个 feed
   if (feeds.value.length > 0) {
     selectFeed(feeds.value[0].name);
   }
+
+  // 异步逐个获取 favicon，不阻塞 UI
+  feeds.value.forEach(async (feed) => {
+    const favicon = await getFaviconBase64(feed.url);
+    feed.favicon = favicon;
+  });
 });
 </script>
