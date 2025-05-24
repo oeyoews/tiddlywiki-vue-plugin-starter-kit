@@ -72,6 +72,7 @@ export const copyDist = (pluginName = 'example') => ({
         if (files.length > 0) {
           // console.log(`找到 ${jsFiles.length} 个 JS 文件需要复制`);
 
+          // todo: 不支持递归查找
           for (const file of files) {
             const sourceFilePath = path.resolve(srcPluginDir, file);
             const targetFilePath = path.resolve(fullTargetDir, file);

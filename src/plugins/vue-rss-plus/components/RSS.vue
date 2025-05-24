@@ -5,63 +5,67 @@
     <MenuIcon
       class="cursor-pointer absolute top-6 right-6 z-20 rounded-full text-gray-800 backdrop-blur p-1 size-6 shadow"
       @click="sidebarOpen = !sidebarOpen" />
-    <div
-      v-show="sidebarOpen"
-      class="w-1/7 p-4">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-          Feeds
-          <RssIcon class="size-4" />
-          <!-- <i
-            class="i-[vscode-icons--file-type-rss] text-orange-400 animate-pulse"></i> -->
-        </h2>
-      </div>
-
-      <!-- Search Bar -->
-      <div class="mb-4 flex">
-        <input
-          v-model="searchTerm"
-          type="text"
-          placeholder="Search feeds..."
-          class="outline-gray-400 border w-full p-2" />
-      </div>
-
-      <!-- Add RSS Feed -->
-      <div class="flex mb-4 justify-between items-center">
-        <input
-          v-model="newFeedUrl"
-          type="text"
-          placeholder="Add RSS URL"
-          class="p-2 border outline-gray-400 placeholder:text-gray-400" />
-        <PlusIcon
-          class="flex items-center bg-gray-300 ml-1 size-7 rounded-sm cursor-pointer"
-          @click="addFeed" />
-      </div>
-
-      <!-- Feed List -->
-      <div class="space-y-1">
-        <div
-          class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-          My Feeds
+    <transition name="sidebar-slide">
+      <div
+        v-show="sidebarOpen"
+        class="w-1/7 p-4"
+        key="sidebar">
+        <div class="flex items-center justify-between mb-6">
+          <h2
+            class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            Feeds
+            <RssIcon class="size-4" />
+            <!-- <i
+              class="i-[vscode-icons--file-type-rss] text-orange-400 animate-pulse"></i> -->
+          </h2>
         </div>
-        <div
-          v-for="feed in filteredFeeds"
-          :key="feed.name"
-          class="flex items-center group gap-1">
-          <div class="flex-1">
-            <FeedButton
-              :feed="feed"
-              :selected="selectedFeed === feed.name"
-              @load="selectFeed(feed.name)" />
+
+        <!-- Search Bar -->
+        <div class="mb-4 flex">
+          <input
+            v-model="searchTerm"
+            type="text"
+            placeholder="Search feeds..."
+            class="outline-gray-400 border w-full p-2" />
+        </div>
+
+        <!-- Add RSS Feed -->
+        <div class="flex mb-4 justify-between items-center">
+          <input
+            v-model="newFeedUrl"
+            type="text"
+            placeholder="Add RSS URL"
+            class="p-2 border outline-gray-400 placeholder:text-gray-400" />
+          <PlusIcon
+            class="flex items-center bg-gray-300 ml-1 size-7 rounded-sm cursor-pointer"
+            @click="addFeed" />
+        </div>
+
+        <!-- Feed List -->
+        <div class="space-y-1">
+          <div
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            My Feeds
+          </div>
+          <div
+            v-for="feed in filteredFeeds"
+            :key="feed.name"
+            class="flex items-center group gap-1">
+            <div class="flex-1">
+              <FeedButton
+                :feed="feed"
+                :selected="selectedFeed === feed.name"
+                @load="selectFeed(feed.name)" />
+            </div>
+          </div>
+          <div class="bottom-1 absolute">
+            <LogoutIcon
+              class="cursor-pointer text-gray-500 size-4"
+              @click="goHome" />
           </div>
         </div>
-        <div class="bottom-1 absolute">
-          <LogoutIcon
-            class="cursor-pointer text-gray-500 size-4"
-            @click="goHome" />
-        </div>
       </div>
-    </div>
+    </transition>
     <!-- Middle Column (Article List) -->
     <div class="overflow-y-auto p-4 w-2/7">
       <h2 class="text-lg mb-3 font-semibold">Articles</h2>
