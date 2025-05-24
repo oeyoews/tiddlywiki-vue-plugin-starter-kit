@@ -1,70 +1,92 @@
 <template>
   <div
     class="flex h-screen bg-gradient-to-tr from-blue-50 via-white to-purple-100">
+    <!-- Sidebar Toggle Button -->
+    <button
+      class="absolute top-4 left-4 z-20 bg-white/80 rounded-full shadow p-2 hover:bg-blue-100 transition-all"
+      @click="sidebarOpen = !sidebarOpen"
+      title="展开/收起侧边栏">
+      <span v-if="sidebarOpen">
+        <i class="i-[material-symbols--chevron-left]"></i>
+      </span>
+      <span v-else>
+        <i class="i-[material-symbols--chevron-right]"></i>
+      </span>
+    </button>
     <!-- Left Sidebar -->
-    <div class="w-64 p-4 bg-white/80 backdrop-blur-md border-r border-blue-100">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-          Feeds
-          <RssIcon class="size-4" />
-          <!-- <i
+    <transition name="sidebar-fade">
+      <div
+        v-show="sidebarOpen"
+        class="w-64 p-4 bg-white/80 backdrop-blur-md border-r border-blue-100 transition-all duration-300"
+        style="min-width: 16rem">
+        <div class="flex items-center justify-between mb-6">
+          <h2
+            class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            Feeds
+            <RssIcon class="size-4" />
+            <!-- <i
             class="i-[vscode-icons--file-type-rss] text-orange-400 animate-pulse"></i> -->
-        </h2>
-      </div>
-
-      <!-- Search Bar -->
-      <div class="mb-4 flex">
-        <input
-          v-model="searchTerm"
-          type="text"
-          placeholder="Search feeds..."
-          class="outline-gray-400 border w-full p-2" />
-      </div>
-
-      <!-- Add RSS Feed -->
-      <div class="flex mb-4 justify-between">
-        <input
-          v-model="newFeedUrl"
-          type="text"
-          placeholder="Add RSS URL"
-          class="p-2 border outline-gray-400 placeholder:text-gray-400" />
-        <button
-          class="flex items-center"
-          @click="addFeed"
-          :disabled="!newFeedUrl.trim()">
-          <i class="i-[material-symbols--add-rounded]"></i>
-          Add
-        </button>
-      </div>
-
-      <!-- Feed List -->
-      <div class="space-y-1">
-        <div
-          class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">
-          My Feeds
+          </h2>
         </div>
-        <div
-          v-for="feed in filteredFeeds"
-          :key="feed.name"
-          class="flex items-center group gap-1">
-          <div class="flex-1 min-w-0">
-            <FeedButton
-              :feed="feed"
-              :selected="selectedFeed === feed.name"
-              @load="selectFeed(feed.name)" />
+
+        <!-- Search Bar -->
+        <div class="mb-4 flex">
+          <input
+            v-model="searchTerm"
+            type="text"
+            placeholder="Search feeds..."
+            class="outline-gray-400 border w-full p-2" />
+        </div>
+
+        <!-- Add RSS Feed -->
+        <div class="flex mb-4 justify-between">
+          <input
+            v-model="newFeedUrl"
+            type="text"
+            placeholder="Add RSS URL"
+            class="p-2 border outline-gray-400 placeholder:text-gray-400" />
+          <button
+            class="flex items-center"
+            @click="addFeed"
+            :disabled="!newFeedUrl.trim()">
+            <i class="i-[material-symbols--add-rounded]"></i>
+            Add
+          </button>
+        </div>
+
+        <!-- Feed List -->
+        <div class="space-y-1">
+          <div
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">
+            My Feeds
+          </div>
+          <div
+            v-for="feed in filteredFeeds"
+            :key="feed.name"
+            class="flex items-center group gap-1">
+            <div class="flex-1 min-w-0">
+              <FeedButton
+                :feed="feed"
+                :selected="selectedFeed === feed.name"
+                @load="selectFeed(feed.name)" />
+            </div>
+          </div>
+          <div class="bottom-1 absolute">
+            <LogoutIcon
+              class="cursor-pointer text-gray-500 size-4"
+              @click="goHome" />
           </div>
         </div>
-        <div class="bottom-1 absolute">
-          <LogoutIcon
-            class="cursor-pointer text-gray-500 size-4"
-            @click="goHome" />
-        </div>
       </div>
-    </div>
-
+    </transition>
     <!-- Middle Column (Article List) -->
     <div
-      class="flex-1 overflow-y-auto p-6 bg-white/60 backdrop-blur-lg rounded-xl mx-4 shadow-lg border border-blue-50">
+      :class="[
+        'transition-all duration-300',
+        sidebarOpen ? 'flex-1' : 'w-1/3',
+      ]"
+      class="overflow-y-auto p-6 bg-white/60 backdrop-blur-lg rounded-xl mx-4 shadow-lg border border-blue-50"
+    >
       <h2 class="text-lg font-semibold mb-4 text-blue-700 drop-shadow">
         Articles
       </h2>
@@ -79,7 +101,11 @@
 
     <!-- Right Column (Article Content) -->
     <div
-      class="w-1/2 overflow-y-auto bg-white/80 backdrop-blur-lg p-8 shadow-2xl rounded">
+      :class="[
+        'overflow-y-auto bg-white/80 backdrop-blur-lg p-8 shadow-2xl rounded transition-all duration-300',
+        sidebarOpen ? 'w-1/2' : 'flex-1'
+      ]"
+    >
       <template v-if="selectedArticle">
         <h2 class="text-2xl font-bold mb-4 text-purple-700 drop-shadow">
           {{ selectedArticle.title }}
@@ -133,6 +159,7 @@ async function getFaviconBase64(url: string): Promise<string> {
 
 const searchTerm = ref('');
 const newFeedUrl = ref('');
+const sidebarOpen = ref(true);
 
 // 根据 rssUrls 初始化 feeds（异步获取 base64 favicon）
 const feeds = ref<any[]>([]);
@@ -253,3 +280,16 @@ onMounted(async () => {
   });
 });
 </script>
+
+<style scoped>
+.sidebar-fade-enter-active,
+.sidebar-fade-leave-active {
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.sidebar-fade-enter-from,
+.sidebar-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+</style>

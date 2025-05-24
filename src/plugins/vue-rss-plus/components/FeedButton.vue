@@ -7,7 +7,9 @@
       :src="feed.favicon"
       class="size-4 rounded-full mr-1" />
     <span class="flex-1 text-left">{{ feed.name }}</span>
-    <span class="text-xs text-gray-500 group-hover:text-gray-700">
+    <span
+      class="text-xs text-gray-500 group-hover:text-gray-700"
+      v-show="feed.count > 0">
       {{ feed.count }}
     </span>
   </button>
