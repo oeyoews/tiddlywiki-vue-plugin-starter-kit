@@ -3,12 +3,11 @@
     <!-- Sidebar Toggle Button -->
     <!-- Left Sidebar -->
     <MenuIcon
-      class="cursor-pointer absolute top-6 right-6 z-20 rounded-full shadow p-2 backdrop-blur-sm size-4"
+      class="cursor-pointer absolute top-6 right-6 z-20 rounded-full text-gray-800 backdrop-blur p-1 size-6 shadow"
       @click="sidebarOpen = !sidebarOpen" />
     <div
       v-show="sidebarOpen"
-      class="w-64 p-4 bg-white/80 backdrop-blur-md border-r border-blue-100 transition-all duration-300"
-      style="min-width: 16rem">
+      class="w-1/7 p-4">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
           Feeds
@@ -28,32 +27,28 @@
       </div>
 
       <!-- Add RSS Feed -->
-      <div class="flex mb-4 justify-between">
+      <div class="flex mb-4 justify-between items-center">
         <input
           v-model="newFeedUrl"
           type="text"
           placeholder="Add RSS URL"
           class="p-2 border outline-gray-400 placeholder:text-gray-400" />
-        <button
-          class="flex items-center"
-          @click="addFeed"
-          :disabled="!newFeedUrl.trim()">
-          <PlusIcon class="size-4" />
-          Add
-        </button>
+        <PlusIcon
+          class="flex items-center bg-gray-300 ml-1 size-7 rounded-sm cursor-pointer"
+          @click="addFeed" />
       </div>
 
       <!-- Feed List -->
       <div class="space-y-1">
         <div
-          class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">
+          class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
           My Feeds
         </div>
         <div
           v-for="feed in filteredFeeds"
           :key="feed.name"
           class="flex items-center group gap-1">
-          <div class="flex-1 min-w-0">
+          <div class="flex-1">
             <FeedButton
               :feed="feed"
               :selected="selectedFeed === feed.name"
@@ -68,35 +63,30 @@
       </div>
     </div>
     <!-- Middle Column (Article List) -->
-    <div class="overflow-y-auto p-3 w-1/4">
+    <div class="overflow-y-auto p-3 w-2/7">
       <h2 class="text-lg font-semibold mb-4">Articles</h2>
-      <div>
-        <ArticleCard
-          v-for="article in articles"
-          :key="article.id"
-          :article="article"
-          @click="selectArticle(article)" />
-      </div>
+      <ArticleCard
+        v-for="article in articles"
+        :key="article.id"
+        :article="article"
+        @click="selectArticle(article)" />
     </div>
 
     <!-- Right Column (Article Content) -->
     <div
-      :class="[
-        'overflow-y-auto p-4',
-        sidebarOpen ? 'w-1/2' : 'flex-1',
-        'overflow-hidden',
-      ]">
-      <template v-if="selectedArticle">
-        <h2 class="text-xl font-bold mb-4">
+      class="overflow-y-auto p-4 pt-0"
+      :class="[sidebarOpen ? 'w-4/7' : 'flex-1']">
+      <div v-if="selectedArticle">
+        <h3 class="text-xl font-bold mb-4 sticky py-1 top-0 z-10">
           {{ selectedArticle.title }}
-        </h2>
+        </h3>
         <p class="text-sm text-gray-500 mb-4">
           {{ selectedArticle.author }}, {{ selectedArticle.date }}
         </p>
         <p
           v-html="selectedArticle.content"
           class="prose max-w-none"></p>
-      </template>
+      </div>
       <template v-else>
         <div class="text-gray-400 text-center mt-20">暂无文章</div>
       </template>
