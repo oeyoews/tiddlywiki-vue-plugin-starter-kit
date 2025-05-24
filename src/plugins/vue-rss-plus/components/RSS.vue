@@ -36,9 +36,10 @@
             type="text"
             placeholder="Add RSS URL"
             class="p-2 border outline-gray-400 placeholder:text-gray-400" />
-          <PlusIcon
-            class="flex items-center bg-gray-300 ml-1 size-7 rounded-sm cursor-pointer"
-            @click="addFeed" />
+          <div
+            class="flex items-center bg-gray-300 ml-1 size-7 rounded-sm cursor-pointer">
+            <PlusIcon @click="addFeed" />
+          </div>
         </div>
 
         <!-- Feed List -->
