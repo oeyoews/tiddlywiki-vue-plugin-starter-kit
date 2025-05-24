@@ -1,11 +1,14 @@
 <template>
-  <div class="flex h-screen">
+  <div
+    class="flex h-screen bg-gradient-to-tr from-blue-50 via-white to-purple-100">
     <!-- Left Sidebar -->
-    <div class="w-64 p-4 shadow-md">
+    <div
+      class="w-64 p-4 shadow-xl rounded-r-3xl bg-white/80 backdrop-blur-md border-r border-blue-100">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold text-gray-800">
+        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
           Feeds
-          <i class="i-[vscode-icons--file-type-rss]"></i>
+          <i
+            class="i-[vscode-icons--file-type-rss] text-orange-400 animate-pulse"></i>
         </h2>
       </div>
 
@@ -15,7 +18,7 @@
           v-model="searchTerm"
           type="text"
           placeholder="Search feeds..."
-          class="w-[90%] p-2 rounded border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors" />
+          class="w-full p-2 rounded-lg border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white/70 backdrop-blur placeholder:text-gray-400" />
       </div>
 
       <!-- Add RSS Feed -->
@@ -24,38 +27,13 @@
           v-model="newFeedUrl"
           type="text"
           placeholder="Add RSS URL"
-          class="flex-1 p-2 rounded border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors" />
+          class="flex-1 p-2 rounded-lg border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white/70 backdrop-blur placeholder:text-gray-400" />
         <button
-          class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          class=""
           @click="addFeed"
           :disabled="!newFeedUrl.trim()">
           <i class="i-[material-symbols--add-rounded]"></i>
           Add
-        </button>
-      </div>
-
-      <!-- Feed Categories -->
-      <div class="space-y-2 mb-4 hidden">
-        <button
-          class="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
-          <span
-            class="h-5 w-5 mr-3"
-            v-html="svgAllFeeds"></span>
-          All Feeds
-        </button>
-        <button
-          class="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
-          <span
-            class="h-5 w-5 mr-3"
-            v-html="svgFavorites"></span>
-          Favorites
-        </button>
-        <button
-          class="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
-          <span
-            class="h-5 w-5 mr-3"
-            v-html="svgRecent"></span>
-          Recent
         </button>
       </div>
 
@@ -68,24 +46,29 @@
         <div
           v-for="feed in filteredFeeds"
           :key="feed.name"
-          class="flex items-center group">
-          <FeedButton
-            :feed="feed"
-            :selected="selectedFeed === feed.name"
-            @load="selectFeed(feed.name)" />
-          <button
-            class="ml-2 text-gray-400 hover:text-blue-500 transition-colors"
-            title="refresh"
-            @click="refreshFeed(feed)">
-            <i class="i-[material-symbols--refresh]"></i>
-          </button>
+          class="flex items-center group gap-1">
+          <div class="flex-1 min-w-0">
+            <FeedButton
+              :feed="feed"
+              :selected="selectedFeed === feed.name"
+              @load="selectFeed(feed.name)"
+              class="w-full transition-all duration-150 rounded-xl shadow-sm border border-transparent px-2 py-1 cursor-pointer bg-white/80 hover:bg-gradient-to-r hover:from-blue-100 hover:to-purple-100 hover:shadow-md hover:border-blue-200 group-hover:scale-[1.02] group-hover:z-10 group-hover:ring-2 group-hover:ring-blue-100"
+              :class="
+                selectedFeed === feed.name
+                  ? 'bg-gradient-to-r from-blue-200 to-purple-200 border-blue-400 shadow-lg scale-105 ring-2 ring-blue-200 text-blue-900 font-bold'
+                  : 'text-gray-700'
+              " />
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Middle Column (Article List) -->
-    <div class="flex-1 overflow-y-auto p-4">
-      <h2 class="text-lg font-semibold mb-4">Articles</h2>
+    <div
+      class="flex-1 overflow-y-auto p-6 bg-white/60 backdrop-blur-lg rounded-xl mx-4 shadow-lg border border-blue-50">
+      <h2 class="text-lg font-semibold mb-4 text-blue-700 drop-shadow">
+        Articles
+      </h2>
       <div>
         <ArticleCard
           v-for="article in articles"
@@ -96,18 +79,24 @@
     </div>
 
     <!-- Right Column (Article Content) -->
-    <div class="w-1/2 overflow-y-auto bg-white p-4 shadow-md">
+    <div
+      class="w-1/2 overflow-y-auto bg-white/80 backdrop-blur-lg p-8 shadow-2xl rounded-l-3xl border-l border-purple-100">
       <template v-if="selectedArticle">
-        <h2 class="text-xl font-bold mb-4">{{ selectedArticle.title }}</h2>
+        <h2 class="text-2xl font-bold mb-4 text-purple-700 drop-shadow">
+          {{ selectedArticle.title }}
+        </h2>
         <p class="text-sm text-gray-500 mb-4">
           {{ selectedArticle.author }}, {{ selectedArticle.date }}
         </p>
         <div>
-          <p v-html="selectedArticle.content"></p>
-          <div class="mt-4 bg-gray-200 h-64 flex items-center justify-center">
-            Article Image/Diagram
+          <p
+            v-html="selectedArticle.content"
+            class="prose max-w-none"></p>
+          <div
+            class="mt-4 bg-gradient-to-r from-blue-100 to-purple-100 h-64 flex items-center justify-center rounded-xl shadow-inner backdrop-blur">
+            <span class="text-gray-400">Article Image/Diagram</span>
           </div>
-          <p class="mt-4">...</p>
+          <p class="mt-4 text-gray-500">...</p>
         </div>
       </template>
       <template v-else>
@@ -123,26 +112,46 @@ import { rss2json } from '../utils/index';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';
-import { svgAllFeeds, svgFavorites, svgRecent } from './svgIcons.js';
 import { rssUrls } from './mockFeeds.js';
+import tiddlywikiIcon from '../assets/icon.svg';
+
+// 获取 favicon 的工具函数（返回 base64）
+async function getFaviconBase64(url: string): Promise<string> {
+  try {
+    const { origin, hostname } = new URL(url);
+    const faviconUrl = `${origin}/favicon.ico`;
+    const res = await fetch(faviconUrl);
+    if (!res.ok) return '';
+    const blob = await res.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return tiddlywikiIcon;
+  }
+}
 
 const searchTerm = ref('');
 const newFeedUrl = ref('');
 
-// 根据 rssUrls 初始化 feeds
-const feeds = ref(
-  rssUrls.map((url) => {
-    let name = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-    if (name.length > 30) name = name.slice(0, 30) + '...';
-    return {
+// 根据 rssUrls 初始化 feeds（异步获取 base64 favicon）
+const feeds = ref<any[]>([]);
+(async () => {
+  for (const url of rssUrls) {
+    let name = new URL(url).hostname;
+    const favicon = await getFaviconBase64(url);
+    feeds.value.push({
       name,
       url,
-      color: 'gray',
       count: 0,
       articles: [],
-    };
-  })
-);
+      favicon,
+    });
+  }
+})();
 
 const filteredFeeds = computed(() => {
   return feeds.value.filter((feed) =>
@@ -214,18 +223,18 @@ function selectArticle(article) {
 async function addFeed() {
   const url = newFeedUrl.value.trim();
   if (!url) return;
-  let name = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-  if (name.length > 30) name = name.slice(0, 30) + '...';
+  let name = new URL(url).hostname;
   if (feeds.value.some((f) => f.url === url || f.name === name)) {
     newFeedUrl.value = '';
     return;
   }
+  const favicon = await getFaviconBase64(url);
   const feed = {
     name,
     url,
-    color: 'gray',
     count: 0,
     articles: [],
+    favicon,
   };
   feeds.value.push(feed);
   selectedFeed.value = name;
@@ -234,18 +243,6 @@ async function addFeed() {
   // 自动选中第一篇
   selectedArticle.value =
     feed.articles && feed.articles.length > 0 ? feed.articles[0] : null;
-}
-
-// 刷新 Feed
-async function refreshFeed(feed) {
-  feed.articles = [];
-  feed.count = 0;
-  await fetchFeedArticles(feed);
-  // 如果当前选中的是这个 feed，则刷新文章选中状态
-  if (selectedFeed.value === feed.name) {
-    selectedArticle.value =
-      feed.articles && feed.articles.length > 0 ? feed.articles[0] : null;
-  }
 }
 
 onMounted(() => {
