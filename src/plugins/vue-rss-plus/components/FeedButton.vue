@@ -1,6 +1,6 @@
 <template>
   <button
-    class="w-full flex items-center px-3 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-100 transition-colors group"
+    class="bg-transparent w-full flex items-center px-3 py-2 text-sm text-gray-700 rounded border-none cursor-pointer hover:bg-gray-100 transition-colors group"
     :class="selected ? 'bg-blue-100 font-bold' : ''"
     @click="$emit('load')">
     <img

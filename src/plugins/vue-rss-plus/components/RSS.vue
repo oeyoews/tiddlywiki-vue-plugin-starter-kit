@@ -17,7 +17,7 @@
           v-model="searchTerm"
           type="text"
           placeholder="Search feeds..."
-          class="w-full p-2" />
+          class="outline-gray-400 border w-full p-2" />
       </div>
 
       <!-- Add RSS Feed -->
@@ -26,9 +26,9 @@
           v-model="newFeedUrl"
           type="text"
           placeholder="Add RSS URL"
-          class="p-2 rounded border placeholder:text-gray-400" />
+          class="p-2 border outline-gray-400 placeholder:text-gray-400" />
         <button
-          class="flex items-center rounded"
+          class="flex items-center"
           @click="addFeed"
           :disabled="!newFeedUrl.trim()">
           <i class="i-[material-symbols--add-rounded]"></i>
@@ -50,13 +50,7 @@
             <FeedButton
               :feed="feed"
               :selected="selectedFeed === feed.name"
-              @load="selectFeed(feed.name)"
-              class="w-full transition-all duration-150 rounded-xl shadow-sm border border-transparent px-2 py-1 cursor-pointer bg-white/80 hover:bg-gradient-to-r hover:from-blue-100 hover:to-purple-100 hover:shadow-md hover:border-blue-200 group-hover:scale-[1.02] group-hover:z-10 group-hover:ring-2 group-hover:ring-blue-100"
-              :class="
-                selectedFeed === feed.name
-                  ? 'bg-gradient-to-r from-blue-200 to-purple-200 border-blue-400 shadow-lg scale-105 ring-2 ring-blue-200 text-blue-900 font-bold'
-                  : 'text-gray-700'
-              " />
+              @load="selectFeed(feed.name)" />
           </div>
         </div>
       </div>
@@ -79,7 +73,7 @@
 
     <!-- Right Column (Article Content) -->
     <div
-      class="w-1/2 overflow-y-auto bg-white/80 backdrop-blur-lg p-8 shadow-2xl rounded-l-3xl border-l border-purple-100">
+      class="w-1/2 overflow-y-auto bg-white/80 backdrop-blur-lg p-8 shadow-2xl rounded">
       <template v-if="selectedArticle">
         <h2 class="text-2xl font-bold mb-4 text-purple-700 drop-shadow">
           {{ selectedArticle.title }}
@@ -87,16 +81,9 @@
         <p class="text-sm text-gray-500 mb-4">
           {{ selectedArticle.author }}, {{ selectedArticle.date }}
         </p>
-        <div>
-          <p
-            v-html="selectedArticle.content"
-            class="prose max-w-none"></p>
-          <div
-            class="mt-4 bg-gradient-to-r from-blue-100 to-purple-100 h-64 flex items-center justify-center rounded-xl shadow-inner backdrop-blur">
-            <span class="text-gray-400">Article Image/Diagram</span>
-          </div>
-          <p class="mt-4 text-gray-500">...</p>
-        </div>
+        <p
+          v-html="selectedArticle.content"
+          class="prose max-w-none"></p>
       </template>
       <template v-else>
         <div class="text-gray-400 text-center mt-20">暂无文章</div>
@@ -189,7 +176,6 @@ async function fetchFeedArticles(feed) {
 }
 
 async function selectFeed(feedName) {
-  console.log('hh');
   selectedFeed.value = feedName;
   const feed = feeds.value.find((f) => f.name === feedName);
   if (feed) {

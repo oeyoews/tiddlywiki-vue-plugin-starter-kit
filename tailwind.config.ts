@@ -29,4 +29,5 @@ export default {
   corePlugins: {
     preflight: false,
   },
+  important: true,
 } satisfies Config;
