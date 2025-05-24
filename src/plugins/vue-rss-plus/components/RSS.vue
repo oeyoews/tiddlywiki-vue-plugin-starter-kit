@@ -3,7 +3,10 @@
     <!-- Left Sidebar -->
     <div class="w-64 p-4 shadow-md">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold text-gray-800">Feeds</h2>
+        <h2 class="text-lg font-semibold text-gray-800">
+          Feeds
+          <i class="i-[vscode-icons--file-type-rss]"></i>
+        </h2>
       </div>
 
       <!-- Search Bar -->
@@ -26,6 +29,7 @@
           class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           @click="addFeed"
           :disabled="!newFeedUrl.trim()">
+          <i class="i-[material-symbols--add-rounded]"></i>
           Add
         </button>
       </div>
@@ -61,12 +65,21 @@
           class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">
           My Feeds
         </div>
-        <FeedButton
+        <div
           v-for="feed in filteredFeeds"
           :key="feed.name"
-          :feed="feed"
-          :selected="selectedFeed === feed.name"
-          @click="selectFeed(feed.name)" />
+          class="flex items-center group">
+          <FeedButton
+            :feed="feed"
+            :selected="selectedFeed === feed.name"
+            @load="selectFeed(feed.name)" />
+          <button
+            class="ml-2 text-gray-400 hover:text-blue-500 transition-colors"
+            title="refresh"
+            @click="refreshFeed(feed)">
+            <i class="i-[material-symbols--refresh]"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -105,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { rss2json } from '../utils/index';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
@@ -181,6 +194,7 @@ async function fetchFeedArticles(feed) {
 }
 
 async function selectFeed(feedName) {
+  console.log('调用', feedName);
   selectedFeed.value = feedName;
   const feed = feeds.value.find((f) => f.name === feedName);
   if (feed) {
@@ -222,18 +236,22 @@ async function addFeed() {
     feed.articles && feed.articles.length > 0 ? feed.articles[0] : null;
 }
 
-// 初始化默认选中第一个 feed 并拉取数据
-if (feeds.value.length > 0) {
-  selectFeed(feeds.value[0].name);
+// 刷新 Feed
+async function refreshFeed(feed) {
+  feed.articles = [];
+  feed.count = 0;
+  await fetchFeedArticles(feed);
+  // 如果当前选中的是这个 feed，则刷新文章选中状态
+  if (selectedFeed.value === feed.name) {
+    selectedArticle.value =
+      feed.articles && feed.articles.length > 0 ? feed.articles[0] : null;
+  }
 }
 
-// 切换 feeds 时自动切换文章
-watch(selectedFeed, async (newFeed) => {
-  const feed = feeds.value.find((f) => f.name === newFeed);
-  if (feed && (!feed.articles || feed.articles.length === 0)) {
-    await fetchFeedArticles(feed);
+onMounted(() => {
+  // 初始化默认选中第一个 feed 并拉取数据
+  if (feeds.value.length > 0) {
+    selectFeed(feeds.value[0].name);
   }
-  selectedArticle.value =
-    feed && feed.articles.length > 0 ? feed.articles[0] : null;
 });
 </script>
