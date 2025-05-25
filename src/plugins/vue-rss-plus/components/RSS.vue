@@ -8,7 +8,7 @@
     <transition name="sidebar-slide">
       <div
         v-show="sidebarOpen"
-        class="w-1/7 p-4"
+        class="p-4"
         key="sidebar">
         <div class="flex items-center justify-between mb-6">
           <h2
@@ -37,7 +37,7 @@
             placeholder="Add RSS URL"
             class="p-2 border outline-gray-400 placeholder:text-gray-400" />
           <div
-            class="flex items-center bg-gray-300 ml-1 size-7 rounded-sm cursor-pointer">
+            class="flex items-center bg-gray-300 ml-1 rounded-sm cursor-pointer">
             <Icons.PlusIcon @click="addFeed" />
           </div>
         </div>
