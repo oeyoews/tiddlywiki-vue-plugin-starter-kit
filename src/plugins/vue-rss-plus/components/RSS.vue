@@ -2,7 +2,7 @@
   <div class="flex h-screen">
     <!-- Sidebar Toggle Button -->
     <!-- Left Sidebar -->
-    <MenuIcon
+    <Icons.MenuIcon
       class="cursor-pointer absolute top-6 right-6 z-20 rounded-full text-gray-800 backdrop-blur p-1 size-6 shadow"
       @click="sidebarOpen = !sidebarOpen" />
     <transition name="sidebar-slide">
@@ -14,7 +14,7 @@
           <h2
             class="text-lg font-semibold text-gray-800 flex items-center gap-2">
             Feeds
-            <RssIcon class="size-4" />
+            <Icons.RSSIcon class="size-4" />
             <!-- <i
               class="i-[vscode-icons--file-type-rss] text-orange-400 animate-pulse"></i> -->
           </h2>
@@ -38,7 +38,7 @@
             class="p-2 border outline-gray-400 placeholder:text-gray-400" />
           <div
             class="flex items-center bg-gray-300 ml-1 size-7 rounded-sm cursor-pointer">
-            <PlusIcon @click="addFeed" />
+            <Icons.PlusIcon @click="addFeed" />
           </div>
         </div>
 
@@ -60,7 +60,7 @@
             </div>
           </div>
           <div class="bottom-1 absolute">
-            <LogoutIcon
+            <Icons.LogoutIcon
               class="cursor-pointer text-gray-500 size-4"
               @click="goHome" />
           </div>
@@ -96,6 +96,25 @@
           <h3 class="text-xl font-bold mb-4 -sticky py-1 top-0 z-10">
             {{ selectedArticle.title }}
           </h3>
+          <div
+            class="flex items-center gap-4 mb-8 text-sm text-gray-500 justify-end">
+            <!-- <div class="flex items-center gap-2">
+              <UserIcon class="size-4" />
+              {{ selectedArticle.author || 'Unknown Author' }}
+            </div> -->
+            <!-- <div class="flex items-center gap-2">
+              <Icons.CalendarIcon class="size-4" />
+              {{ selectedArticle.date }}
+            </div> -->
+            <a
+              v-if="selectedArticle.link"
+              :href="selectedArticle.link"
+              target="_blank"
+              class="flex items-center gap-1 text-orange-500 hover:text-orange-600">
+              <Icons.LinkIcon class="size-4" />
+              Original
+            </a>
+          </div>
           <p class="text-sm text-gray-500 mb-4">
             {{ selectedArticle.author }}, {{ selectedArticle.date }}
           </p>
@@ -116,14 +135,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { rss2json } from '~/vue-rss-plus/utils';
-// @ts-ignore
-import RssIcon from '~icons/tw-icons/rss';
-// @ts-ignore
-import LogoutIcon from '~icons/tw-icons/logout';
-// @ts-ignore
-import MenuIcon from '~icons/tw-icons/menu';
-// @ts-ignore
-import PlusIcon from '~icons/tw-icons/plus';
+import * as Icons from '@/components/Icons';
 // 引入抽离的组件
 import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';
