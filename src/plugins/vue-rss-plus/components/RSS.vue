@@ -110,7 +110,7 @@
               v-if="selectedArticle.link"
               :href="selectedArticle.link"
               target="_blank"
-              class="flex items-center gap-1 text-orange-500 hover:text-orange-600">
+              class="flex items-center gap-1 text-orange-500 hover:text-orange-600 no-underline">
               <Icons.LinkIcon class="size-4" />
               Original
             </a>
@@ -146,7 +146,7 @@ const goHome = () => $tw.wiki.deleteTiddler('$:/layout');
 // 获取 favicon 的工具函数（返回 base64）
 async function getFaviconBase64(url: string): Promise<string> {
   try {
-    const { origin, hostname } = new URL(url);
+    const { origin } = new URL(url);
     const faviconUrl = `${origin}/favicon.ico`;
     const res = await fetch(faviconUrl);
     if (!res.ok) return '';
