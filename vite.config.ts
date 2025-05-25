@@ -83,7 +83,7 @@ const createPluginConfig = (plugin) => {
       tailwindcss(),
       Icons({
         customCollections: {
-          'tw-icons': FileSystemIconLoader('./assets/icons', (svg) => {
+          'tw-icons': FileSystemIconLoader('./src/assets/icons', (svg) => {
             return svg.replace(/^<svg /, '<svg fill="currentColor" ');
           }),
         },
