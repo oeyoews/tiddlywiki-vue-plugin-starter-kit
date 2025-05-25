@@ -1,4 +1,5 @@
 export { default as RSSIcon } from '~icons/tw-icons/rss';
+export { default as SaveIcon } from '~icons/tw-icons/save';
 export { default as CalendarIcon } from '~icons/tw-icons/calendar';
 export { default as LinkIcon } from '~icons/tw-icons/link';
 export { default as LogoutIcon } from '~icons/tw-icons/logout';

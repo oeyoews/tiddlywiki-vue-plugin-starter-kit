@@ -68,7 +68,7 @@
       </div>
     </transition>
     <!-- Middle Column (Article List) -->
-    <div class="overflow-y-auto p-4 w-2/7">
+    <div class="overflow-y-auto p-4 w-2/7 custom-scrollbar">
       <h2 class="text-lg mb-3 font-semibold">Articles</h2>
       <transition-group
         name="fade"
@@ -82,7 +82,7 @@
     </div>
     <!-- Right Column (Article Content) -->
     <div
-      class="overflow-y-auto p-4 pt-0"
+      class="overflow-y-auto p-4 pt-0 overflow-x-hidden custom-scrollbar"
       :class="[sidebarOpen ? 'w-4/7' : 'flex-1']">
       <transition
         name="fade"
@@ -97,23 +97,26 @@
             {{ selectedArticle.title }}
           </h3>
           <div
-            class="flex items-center gap-4 mb-8 text-sm text-gray-500 justify-end">
+            class="flex items-center gap-2 mb-8 text-sm text-gray-500 justify-end">
             <!-- <div class="flex items-center gap-2">
               <UserIcon class="size-4" />
               {{ selectedArticle.author || 'Unknown Author' }}
             </div> -->
-            <!-- <div class="flex items-center gap-2">
-              <Icons.CalendarIcon class="size-4" />
-              {{ selectedArticle.date }}
-            </div> -->
-            <a
-              v-if="selectedArticle.link"
-              :href="selectedArticle.link"
-              target="_blank"
-              class="flex items-center gap-1 text-orange-500 hover:text-orange-600 no-underline">
-              <Icons.LinkIcon class="size-4" />
-              Original
-            </a>
+            <div class="flex items-center gap-1 text-green-400 cursor-pointer">
+              <Icons.SaveIcon class="size-3" />
+              Save
+            </div>
+            <div class="h-3 w-0.5 bg-slate-300/80 rounded-full"></div>
+            <div>
+              <a
+                v-if="selectedArticle.link"
+                :href="selectedArticle.link"
+                target="_blank"
+                class="flex items-center gap-1 text-orange-500 hover:text-orange-600 no-underline">
+                <Icons.LinkIcon class="size-4" />
+                Original
+              </a>
+            </div>
           </div>
           <p class="text-sm text-gray-500 mb-4">
             {{ selectedArticle.author }}, {{ selectedArticle.date }}
