@@ -102,7 +102,9 @@
               <UserIcon class="size-4" />
               {{ selectedArticle.author || 'Unknown Author' }}
             </div> -->
-            <div class="flex items-center gap-1 text-green-400 cursor-pointer">
+            <div
+              class="flex items-center gap-1 text-green-400 cursor-pointer"
+              @click="saveTiddler(selectedArticle)">
               <Icons.SaveIcon class="size-3" />
               Save
             </div>
@@ -144,7 +146,20 @@ import FeedButton from './FeedButton.vue';
 import ArticleCard from './ArticleCard.vue';
 import { rssUrls } from './mockFeeds';
 import tiddlywikiIcon from '../assets/icon.svg';
+import { useSave } from '@/hooks/useSave';
 const goHome = () => $tw.wiki.deleteTiddler('$:/layout');
+
+const saveHook = useSave();
+const saveTiddler = (feed: any) => {
+  const tiddler = {
+    created: new Date(),
+    modified: new Date(),
+    title: feed.title.trim(),
+    text: feed.content.trim(),
+    link: feed.link,
+  };
+  saveHook.saveTiddler(tiddler);
+};
 
 // 获取 favicon 的工具函数（返回 base64）
 async function getFaviconBase64(url: string): Promise<string> {
