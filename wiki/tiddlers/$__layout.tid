@@ -1,6 +1,6 @@
 created: 20250525040841013
-modified: 20250525040841013
+modified: 20250525042934014
 title: $:/layout
 type: text/vnd.tiddlywiki
 
-$:/plugins/oeyoews/vue-rss-plus/Layout
+$:/core/ui/PageTemplate

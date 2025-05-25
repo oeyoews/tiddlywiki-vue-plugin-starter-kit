@@ -1,0 +1,182 @@
+created: 20250525042904041
+link: https://www.freecodecamp.org/news/how-to-use-react-19-in-pcf-components/
+modified: 20250525042904041
+title: How to Use React 19 in Power Apps PCF Components
+type: text/vnd.tiddlywiki
+
+The Power Apps Component Framework – PCF for short – lets you create complex custom components using traditional web development tools like HTML, CSS, and JavaScript. When creating a new PCF project, you can choose from two types of controls: standar... 
+                
+                     <p>The Power Apps Component Framework – PCF for short – lets you create complex custom components using traditional web development tools like HTML, CSS, and JavaScript.</p>
+<p>When creating a new PCF project, you can choose from two types of controls: <strong>standard controls</strong> and <strong>React virtual controls</strong>. For non-trivial components, React is often a good choice because it abstracts away much of the heavy DOM manipulation. But, when you’re using React with PCF, you’re currently limited to React 16 in Canvas apps and React 17 in Model-Driven apps.</p>
+<p>That doesn’t mean you <em>can’t</em> use a newer version – but doing so means opting out of virtualization support. For many PCF components, that trade-off is usually acceptable.</p>
+<p>In this article, I’ll show you how to integrate the latest version of React (v19) with your PCF component. We’ll install the necessary dependencies and configure the component to take full advantage of the latest version of React.</p>
+<h3 id="heading-this-article-assumes-that-you">This article assumes that you:</h3>
+<ul>
+<li><p>Understand how to use the PAC CLI to create PCF projects.</p>
+</li>
+<li><p>Are comfortable using the command line and a code editor (for example, VS Code)</p>
+</li>
+<li><p>Know the basics of React</p>
+</li>
+<li><p>Have some experience with PCF development</p>
+</li>
+</ul>
+<p>Note: You don’t need access to a Power Platform environment unless you want to deploy the component. The built-in test harness will be sufficient to follow along with this article.</p>
+<h3 id="heading-in-this-tutorial-you-will">In this tutorial, you will:</h3>
+<ul>
+<li><p><a class="post-section-overview" href="#heading-create-a-pcf-project">Create a PCF Project</a></p>
+</li>
+<li><p><a class="post-section-overview" href="#heading-install-the-react-dependencies">Install the React Dependencies</a></p>
+</li>
+<li><p><a class="post-section-overview" href="#heading-create-a-non-react-button">Create a Non-React Button</a></p>
+</li>
+<li><p><a class="post-section-overview" href="#heading-create-a-react-button">Create a React Button</a></p>
+</li>
+<li><p><a class="post-section-overview" href="#heading-add-the-react-button-to-the-pcf-component">Add the React Button to the PCF Component</a></p>
+</li>
+<li><p><a class="post-section-overview" href="#heading-render-the-react-button-when-the-pcf-component-updates">Render the React Button When the PCF Component Updates</a></p>
+</li>
+</ul>
+<h2 id="heading-create-a-pcf-project">Create a PCF Project</h2>
+<p>To create a PCF project, you’ll use the <strong>PAC CLI</strong>. If you haven’t installed it yet, follow the instructions <a target="_blank" href="https://learn.microsoft.com/en-us/power-platform/developer/cli/introduction?tabs=windows">here</a>.</p>
+<p>From the directory of your choice, create a new folder for this project, and then open your terminal and run:</p>
+<pre><code class="lang-bash">pac pcf init -ns SampleNameSpace -n SampleComponent --template field
+</code></pre>
+<p>Once it finishes, run:</p>
+<pre><code class="lang-bash">npm install
+</code></pre>
+<p>This installs the default project dependencies.</p>
+<p>So why didn’t we use the <code>--framework</code> flag to specify React during project creation? Because that flag sets up a React virtual control, which only supports React 16/17. Instead, we’re creating a standard control and installing React ourselves.</p>
+<h2 id="heading-install-the-react-dependencies">Install the React Dependencies</h2>
+<p>To use React 19, you’ll need four dependencies:</p>
+<ul>
+<li><p><code>react</code></p>
+</li>
+<li><p><code>react-dom</code></p>
+</li>
+<li><p><code>@types/react</code></p>
+</li>
+<li><p><code>@types/react-dom</code></p>
+</li>
+</ul>
+<p>These last two provide TypeScript typings for React. Install the above dependencies with:</p>
+<pre><code class="lang-bash">npm install -D react react-dom @types/react @types/react-dom
+</code></pre>
+<p>You can verify the installation by looking at the <code>package.json</code> file in the project.</p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1747410603816/a7eeeb60-dcbe-49c9-9913-6319cd246333.png" alt="The package.json file showing the react dependencies installed." class="image--center mx-auto" width="600" height="400" loading="lazy"></p>
+<p>While not necessary for what we will be doing, in order to use some newer React features, you may need to tweak the <code>compilerOptions</code> in the <code>tsconfig.json</code> file to include the line below:</p>
+<pre><code class="lang-json"><span class="hljs-string">"jsx"</span>: <span class="hljs-string">"react-jsx"</span>
+</code></pre>
+<p>Here is what the <code>tsconfig.json</code> file should look like with the added <code>jsx</code> line:</p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1747410782472/524ac9a6-3898-4427-8bab-090fe0a3f718.png" alt="524ac9a6-3898-4427-8bab-090fe0a3f718" class="image--center mx-auto" width="600" height="400" loading="lazy"></p>
+<h2 id="heading-create-a-non-react-button">Create a Non-React Button</h2>
+<p>Let’s verify that everything works before we introduce React.</p>
+<p>From the command line, run:</p>
+<pre><code class="lang-bash">npm run start:watch
+</code></pre>
+<p>This may take a moment. It will open a browser showing your PCF test harness. You’ll likely see an empty screen. That’s expected – we haven’t rendered anything yet.</p>
+<p>Open <code>index.ts</code> in the <code>SampleComponent</code> folder. This file contains a class that implements the PCF standard control interface. Let’s create a basic non-React button.</p>
+<p>Update the <code>init</code> method in the <code>index.ts</code> file like this:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">public</span> init(
+    context: ComponentFramework.Context&lt;IInputs&gt;,
+    notifyOutputChanged: <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">void</span>,
+    state: ComponentFramework.Dictionary,
+    container: HTMLDivElement
+): <span class="hljs-built_in">void</span> {
+    <span class="hljs-comment">// A basic button with vanilla JS and the DOM</span>
+    <span class="hljs-keyword">const</span> btn = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'button'</span>);
+    btn.textContent = <span class="hljs-string">'Click me!'</span>;
+    container.appendChild(btn);
+
+    <span class="hljs-comment">// A simple event lister for button clicks</span>
+    btn.addEventListener(<span class="hljs-string">'click'</span>, <span class="hljs-function">() =&gt;</span> {
+        alert(<span class="hljs-string">'Button clicked!'</span>);
+    });
+}
+</code></pre>
+<p>Now, head back to your test harness. You should see a button. Clicking it should display an alert.</p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1747411524929/36d26f79-1d48-403c-9005-56655a16ed04.png" alt="PCF test harness with clickable button." class="image--center mx-auto" width="600" height="400" loading="lazy"></p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1747411544199/85aab788-1a02-439c-8597-d74d6fa3a39c.png" alt="PCF test harness with alert displayed after button was clicked." class="image--center mx-auto" width="600" height="400" loading="lazy"></p>
+<h2 id="heading-create-a-react-button">Create a React Button</h2>
+<p>Next, let’s replace our plain DOM code with React.</p>
+<p>Delete the button code from <code>init()</code>, leaving the <code>init</code> method empty.</p>
+<p>Then, create a new file: <code>Button.tsx</code>. Inside <code>Button.tsx</code>, add the code below. This component will accept a label prop and emit an <code>onClick</code> event. Make sure to export the function.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Button</span>(<span class="hljs-params">props: { label: <span class="hljs-built_in">string</span>; onClick: () =&gt; <span class="hljs-built_in">void</span> }</span>) </span>{
+    <span class="hljs-keyword">return</span> &lt;button onClick={props.onClick}&gt;{props.label}&lt;/button&gt;;
+}
+</code></pre>
+<h2 id="heading-add-the-react-button-to-the-pcf-component">Add the React Button to the PCF Component</h2>
+<p>In <code>index.ts</code>, update the file to:</p>
+<ol>
+<li><p>Import <code>createRoot</code> from <code>react-dom/client</code></p>
+</li>
+<li><p>Import the <code>Button</code> component</p>
+</li>
+<li><p>Render the <code>Button</code> component</p>
+</li>
+</ol>
+<p>Here is the minimal example:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { createRoot } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom/client'</span>; <span class="hljs-comment">// import the createRoot method</span>
+<span class="hljs-keyword">import</span> Button <span class="hljs-keyword">from</span> <span class="hljs-string">'./Button'</span>; <span class="hljs-comment">//import the button.tsx component we just created</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> SampleComponent
+    <span class="hljs-keyword">implements</span> ComponentFramework.StandardControl&lt;IInputs, IOutputs&gt;
+{
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-comment">// Empty</span>
+    }
+    <span class="hljs-keyword">public</span> init(
+        context: ComponentFramework.Context&lt;IInputs&gt;,
+        notifyOutputChanged: <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">void</span>,
+        state: ComponentFramework.Dictionary,
+        container: HTMLDivElement
+    ): <span class="hljs-built_in">void</span> {
+        <span class="hljs-comment">// Add the code below to create a React root that allows us to render our button component.</span>
+        <span class="hljs-keyword">const</span> root = createRoot(container);
+        root.render(
+            Button({ label: <span class="hljs-string">'React Button'</span>, onClick: <span class="hljs-function">() =&gt;</span> alert(<span class="hljs-string">'React Button Clicked!'</span>) })
+        );
+    }
+    <span class="hljs-comment">// Other methods here...</span>
+}
+</code></pre>
+<p>You should now see “React Button” in the browser. Clicking it will trigger the alert.</p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1747412200377/ef496e75-de8f-4abe-8371-25dd295ee057.png" alt="PCF test harness with the React button" class="image--center mx-auto" width="600" height="400" loading="lazy"></p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1747412239139/d4c73764-667f-445c-9366-aa270e456d13.png" alt="PCF test harness with alert displayed after the React buttons was clicked." class="image--center mx-auto" width="600" height="400" loading="lazy"></p>
+<h2 id="heading-render-the-react-button-when-the-pcf-component-updates">Render the React Button When the PCF Component Updates</h2>
+<p>Many PCF components receive dynamic input values. If the inputs change, we want the React component to re-render. This is where <code>updateView()</code> comes in. <code>updateView()</code> is triggered when the PCF property bag changes.</p>
+<p>Let’s move the rendering logic from <code>init()</code> to <code>updateView()</code>.</p>
+<p>First, import <code>Root</code> from <code>react-dom/client</code>, and initialize <code>root</code> as a property of the class.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { createRoot, Root } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom/client'</span>; <span class="hljs-comment">//add Root as an import</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> SampleComponent <span class="hljs-keyword">implements</span> ComponentFramework.StandardControl&lt;IInputs, IOutputs&gt; {
+    root: Root; <span class="hljs-comment">// initialize the root property on the SampleComponent class</span>
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-comment">// Empty</span>
+    }
+    <span class="hljs-comment">// other methods here...</span>
+}
+</code></pre>
+<p>Then, modify <code>init()</code> to set <code>this.root</code> to the root created by React’s <code>createRoot</code> method. Move the rendering logic from the <code>init</code> method to <code>updateView()</code>, replacing <code>root</code> with <code>this.root</code>.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">public</span> init(
+    context: ComponentFramework.Context&lt;IInputs&gt;,
+    notifyOutputChanged: <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">void</span>,
+    state: ComponentFramework.Dictionary,
+    container: HTMLDivElement
+    ): <span class="hljs-built_in">void</span> {
+        <span class="hljs-built_in">this</span>.root = createRoot(container); <span class="hljs-comment">// assign the root React creates to this.root</span>
+    }
+
+<span class="hljs-keyword">public</span> updateView(context: ComponentFramework.Context&lt;IInputs&gt;): <span class="hljs-built_in">void</span> {
+    <span class="hljs-comment">// render the React button component, by referencing this.root</span>
+    <span class="hljs-built_in">this</span>.root.render(
+        Button({ label: <span class="hljs-string">'React Button'</span>, onClick: <span class="hljs-function">() =&gt;</span> alert(<span class="hljs-string">'Button Clicked!'</span>) })
+    );
+}
+</code></pre>
+<p>With the above setup, React will now re-render your button when the property bag of a PCF component changes.</p>
+<h2 id="heading-wrapping-up">Wrapping Up</h2>
+<p>You’ve now created a PCF component that uses the latest version of React! By installing and configuring React manually, you avoid the version limitations of Microsoft’s built-in React controls – unlocking the power of modern React features.</p>
+<p>While this setup doesn’t support virtualization, for many components that’s a fair trade-off for modern tooling and maintainability.</p>
+<p>If you’re building PCF components beyond simple DOM manipulation, React can be a powerful way to improve your development workflow and UI flexibility.</p>
+<p><strong><em>Enjoyed this article?</em></strong> I write regularly about low-code, development patterns, and practical tech topics at <a target="_blank" href="https://www.scriptedbytes.com/">scriptedbytes.com</a></p>
