@@ -4,8 +4,8 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { copyDist } from './vite-plugins/copy-dist/index';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
@@ -50,7 +50,26 @@ if (pluginsToProcess.length === 0) {
 
 // 创建单个插件的构建配置
 const createPluginConfig = (plugin) => {
-  // console.log(`Creating build config for plugin: ${plugin}`);
+  const pluginDir = path.resolve(__dirname, `src/plugins/${plugin}`);
+  let entries: string[] = [];
+  if (fs.existsSync(pluginDir)) {
+    entries = fs.readdirSync(pluginDir)
+      .filter((file) => {
+        // 匹配 main.ts 或 main-*.ts
+        return (
+          file === 'main.ts' ||
+          (file.startsWith('main-') && file.endsWith('.ts'))
+        );
+      })
+      .map((file) => path.join(pluginDir, file));
+  }
+
+  // 构造 input 对象，key 为文件名（不含扩展名），value 为路径
+  const input = {};
+  entries.forEach((entryPath) => {
+    const baseName = path.basename(entryPath, '.ts'); // 如 main 或 main-xxx
+    input[baseName] = entryPath;
+  });
 
   return defineConfig({
     resolve: {
@@ -63,16 +82,29 @@ const createPluginConfig = (plugin) => {
     build: {
       minify: true,
       lib: {
-        entry: path.resolve(__dirname, `src/plugins/${plugin}/main.ts`),
-        fileName: 'app',
+        entry: input,
         formats: ['cjs'],
+        fileName: (format, entryName) => {
+          if (entryName === 'main') {
+            return 'app.cjs';
+          }
+          console.log(entryName)
+          return `${entryName.replace(/^main-/, 'app-')}.cjs`;
+        },
       },
       outDir: 'dist-' + plugin,
       rollupOptions: {
         external: ['vue'],
         output: {
           globals: { vue: 'Vue' },
+          entryFileNames: (chunkInfo) => {
+            if (chunkInfo.name.startsWith('main-')) {
+              return `app-${chunkInfo.name.slice(5)}.cjs`; // 去掉 main-，换成 app-
+            }
+            return `app.cjs`;
+          },
         },
+        input,
       },
       cssCodeSplit: false,
       emptyOutDir: true,

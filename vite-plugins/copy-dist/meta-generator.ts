@@ -57,7 +57,7 @@ export function ensureMetaFile(filePath, pluginName = DEFAULT_PLUGIN_NAME) {
 
   // 写入 meta 文件
   fs.writeFileSync(metaPath, metaContent, 'utf-8');
-  console.log(`✅ 创建 meta 文件: ${metaPath}`);
+  console.log(`🌀  创建 meta 文件: ${metaPath}`);
 }
 
 /**
@@ -81,7 +81,7 @@ export function copyFileWithMeta(sourcePath, targetPath, pluginName = DEFAULT_PL
 
   // 复制文件
   fs.copyFileSync(sourcePath, targetPath);
-  console.log(`✅ 复制文件: ${sourcePath} -> ${targetPath}`);
+  console.log(`📁 复制文件: ${sourcePath} -> ${targetPath}`);
 
   // 确保有 meta 文件
   ensureMetaFile(targetPath, pluginName);

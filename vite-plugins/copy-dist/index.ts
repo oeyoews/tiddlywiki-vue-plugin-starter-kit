@@ -45,30 +45,30 @@ export const copyDist = (pluginName = 'example') => ({
       }
 
       // 复制 app.cjs产物 到目标目录app.js
-      const sourcePath = path.resolve(distPluginDir, 'app.cjs');
-      const targetPath = path.resolve(rootDir, targetDir, 'app.js');
+      // const sourcePath = path.resolve(distPluginDir, 'app.cjs');
+      // const targetPath = path.resolve(rootDir, targetDir, 'app.js');
 
-      if (fs.existsSync(sourcePath)) {
-        let code = fs.readFileSync(sourcePath, 'utf-8');
-        const target = 'require("vue")';
+      // if (fs.existsSync(sourcePath)) {
+      //   let code = fs.readFileSync(sourcePath, 'utf-8');
+      //   const target = 'require("vue")';
 
-        if (code.includes(target)) {
-          console.log(`✅ 找到${target} ,开始兼容tiddlywiki...`);
-          code = code.replace(target, 'window.Vue');
-          fs.writeFileSync(sourcePath, code, 'utf-8');
-          console.log('✅ 兼容完成');
-        } else {
-          console.log(`❌ 没有找到${target},无需替换`);
-        }
+      //   if (code.includes(target)) {
+      //     console.log(`✅ 找到${target} ,开始兼容tiddlywiki...`);
+      //     code = code.replace(target, 'window.Vue');
+      //     fs.writeFileSync(sourcePath, code, 'utf-8');
+      //     console.log('🐸  兼容完成 app.cjs');
+      //   } else {
+      //     console.log(`❌ 没有找到${target},无需替换`);
+      //   }
 
-        // 复制文件
-        fs.copyFileSync(sourcePath, targetPath);
+      //   // 复制文件
+      //   fs.copyFileSync(sourcePath, targetPath);
 
-        // 确保有 meta 文件(app.js.meta)
-        copyFileWithMeta(sourcePath, targetPath, pluginName);
-      } else {
-        console.error(`Source file not found: ${sourcePath}`);
-      }
+      //   // 确保有 meta 文件(app.js.meta)
+      //   copyFileWithMeta(sourcePath, targetPath, pluginName);
+      // } else {
+      //   console.error(`Source file not found: ${sourcePath}`);
+      // }
 
       // 插件的所有样式会放到app.css 里面
       // disable tailwindcss for v4
@@ -100,6 +100,35 @@ export const copyDist = (pluginName = 'example') => ({
             }
           }
         }
+      }
+
+      // 复制所有 app.cjs 和 app-xxx.cjs 到目标目录
+      const cjsFiles = fs.readdirSync(distPluginDir)
+        .filter(f => /^app(\-.+)?\.cjs$/.test(f));
+
+      for (const cjsFile of cjsFiles) {
+        const sourcePath = path.resolve(distPluginDir, cjsFile);
+        // 目标文件名：app.cjs -> app.js，app-xxx.cjs -> app-xxx.js
+        const targetFileName = cjsFile.replace(/\.cjs$/, '.js');
+        const targetPath = path.resolve(rootDir, targetDir, targetFileName);
+
+        let code = fs.readFileSync(sourcePath, 'utf-8');
+        const target = 'require("vue")';
+
+        if (code.includes(target)) {
+          console.log(`🔎 找到${target} ,开始兼容tiddlywiki...`);
+          code = code.replace(target, 'window.Vue');
+          fs.writeFileSync(sourcePath, code, 'utf-8');
+          console.log(`🐸 兼容完成(${sourcePath})`);
+        } else {
+          console.log(`❌ 没有找到${target},无需替换`, sourcePath);
+        }
+
+        // 复制文件
+        fs.copyFileSync(sourcePath, targetPath);
+
+        // 确保有 meta 文件
+        copyFileWithMeta(sourcePath, targetPath, pluginName);
       }
     } catch (error) {
       console.error('Error copying files(copy-dist):', error);
