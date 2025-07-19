@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import Stack from '@/plugins/vue-bits/components/Stack.vue';
+  import SplashCursor from '@/plugins/vue-bits/components/Splash.vue';
 
   // 定义组件可接收的属性
   const props = defineProps<{
@@ -20,6 +21,22 @@
   <div class="vue-bits-plugin">
     <Stack :randomRotation="true" :sensitivity="180" :sendToBackOnClick="false"
       :cardDimensions="{ width: 400, height: 300 }" :cardsData="images"></Stack>
+      <SplashCursor
+    :SIM_RESOLUTION="128"
+    :DYE_RESOLUTION="1440"
+    :CAPTURE_RESOLUTION="512"
+    :DENSITY_DISSIPATION="3.5"
+    :VELOCITY_DISSIPATION="2"
+    :PRESSURE="0.1"
+    :PRESSURE_ITERATIONS="20"
+    :CURL="3"
+    :SPLAT_RADIUS="0.2"
+    :SPLAT_FORCE="6000"
+    :SHADING="true"
+    :COLOR_UPDATE_SPEED="10"
+    :BACK_COLOR="{ r: 0.5, g: 0, b: 0 }"
+    :TRANSPARENT="true"
+  />
   </div>
 </template>
 
