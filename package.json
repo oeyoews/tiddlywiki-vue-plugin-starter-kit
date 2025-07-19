@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "tiddlywiki ./wiki --listen",
-    "build": "cross-env PLUGIN_NAME='vue-rss-plus' vite build --mode=prod",
+    "start": "tiddlywiki ./wiki --listen port=8976",
+    "build": "cross-env PLUGIN_NAME='vue-bits' vite build --mode=prod",
     "build:plugin": "vite build",
     "build:all": "node scripts/build-all-plugins.js",
     "new": "node scripts/create-plugin.js"
@@ -28,6 +28,7 @@
     "@vue/tsconfig": "^0.7.0",
     "cross-env": "^7.0.3",
     "element-plus": "^2.9.10",
+    "motion-v": "^1.5.0",
     "tailwindcss": "^4.1.7",
     "tiddlywiki": "^5.3.6",
     "tw5-typed": "^0.6.3",
@@ -40,7 +41,9 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@tailwindcss/oxide"
+      "@tailwindcss/oxide",
+      "esbuild",
+      "vue-demi"
     ]
   }
 }

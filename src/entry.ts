@@ -1,5 +1,7 @@
 import { createApp } from 'vue';
-import App from '~/vue-rss-plus/App.vue';
+// 调试插件
+import App from '~/vue-bits/App.vue';
+// import './plugins/example/global.css'
 
 const app = createApp(App);
 
