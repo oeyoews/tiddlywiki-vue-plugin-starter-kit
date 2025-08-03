@@ -23,6 +23,7 @@ function generateMetaContent(filePath, pluginName = DEFAULT_PLUGIN_NAME) {
   switch (ext) {
     // for app.cjs
     case '.js':
+    case '.cjs':
       return `title: ${title}
 type: application/javascript
 hide-body: yes

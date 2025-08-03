@@ -103,18 +103,27 @@ export const copyDist = (pluginName = 'example') => ({
       }
 
       // 复制所有 app.cjs 和 app-xxx.cjs 到目标目录
+      // 复制所有 index-xxx.cjs 到目标目录
       const cjsFiles = fs.readdirSync(distPluginDir)
-        .filter(f => /^app(\-.+)?\.cjs$/.test(f));
+        .filter(f => /^(app(\-.+)?|index\-.+)\.cjs$/.test(f));
+
+      // const cjsFiles = fs.readdirSync(distPluginDir)
+      //   .filter(f => /^app(\-.+)?\.cjs$/.test(f));
+      const indexCjsFiles = fs.readdirSync(distPluginDir)
+        .filter(f => /^index\-.+\.cjs$/.test(f));
 
       for (const cjsFile of cjsFiles) {
         const sourcePath = path.resolve(distPluginDir, cjsFile);
         // 目标文件名：app.cjs -> app.js，app-xxx.cjs -> app-xxx.js
-        const targetFileName = cjsFile.replace(/\.cjs$/, '.js');
+        // const targetFileName = cjsFile.replace(/\.cjs$/, '.js');
+        // index-xxx.cjs 不改名
+        const targetFileName = indexCjsFiles.includes(cjsFile) ? cjsFile : cjsFile.replace(/\.cjs$/, '.js');
         const targetPath = path.resolve(rootDir, targetDir, targetFileName);
 
         let code = fs.readFileSync(sourcePath, 'utf-8');
         const target = 'require("vue")';
 
+        // 替换vue, 兼容tiddlywiki
         if (code.includes(target)) {
           console.log(`🔎 找到${target} ,开始兼容tiddlywiki...`);
           code = code.replace(target, 'window.Vue');
@@ -130,6 +139,7 @@ export const copyDist = (pluginName = 'example') => ({
         // 确保有 meta 文件
         copyFileWithMeta(sourcePath, targetPath, pluginName);
       }
+
     } catch (error) {
       console.error('Error copying files(copy-dist):', error);
     }

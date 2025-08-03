@@ -88,7 +88,6 @@ const createPluginConfig = (plugin) => {
           if (entryName === 'main') {
             return 'app.cjs';
           }
-          console.log(entryName)
           return `${entryName.replace(/^main-/, 'app-')}.cjs`;
         },
       },
